@@ -4,7 +4,7 @@ from __future__ import division, print_function, absolute_import
 
 import tflearn
 import tensorflow as tf
-import time
+import json
 import file_handler as fh
 import cv2
 import numpy as np
@@ -21,6 +21,8 @@ dir_pred = "../data/imgs/ae_pred/"
 dir_records = "../data/imgs/records/"
 #path_model = "D:/Velodyne/20180201_icsens_innenstadt/models/conv_dyn_velodyne.ckpt"
 path_model = "../data/models/conv_ae_velodyne.ckpt"
+path_traj = '../data/traj/scan_traj_20180201.txt'
+dir_export = '../data/features/velodyne_' + str(last_encoder_width) + '.json'
 
 # log file
 log_filename = "../data/logs/log_features_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
@@ -122,6 +124,8 @@ def create_network(x):
     return output, x, fc2
 
 def export_encoder():
+    # get trajectory
+    traj = fh.get_scan_trajectory(path_traj)
     
     # get all images
     filenames = fh.files_in_folder(dir_data)
@@ -129,11 +133,13 @@ def export_encoder():
     log_file.write(current_string)
     number_of_scans = filenames.shape[0]
     
+    # save feature values here
     encoder_values = np.zeros((number_of_scans, last_encoder_width))
     k = 1
     if number_of_scans % 100 == 0:
         k = 0
-        
+    
+    # get feature values
     saver = tf.train.Saver()
     with tf.Session()  as sess:
         #load model
@@ -152,19 +158,26 @@ def export_encoder():
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
+            current_string = str(j) + " " + str(filenames[j]) + "\n"
             log_file.write(current_string)
+            log_file.flush()
             values, pred = sess.run([encoder, output], feed_dict={x: imgs})
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
-            pred = np.array(pred)
-            pred = np.reshape(pred, [pred.shape[0], pred.shape[1], pred.shape[2]])
+    # export values to json file
+    with open(dir_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+            
+            #pred = np.array(pred)
+            #pred = np.reshape(pred, [pred.shape[0], pred.shape[1], pred.shape[2]])
 
-            for j in range(imgs.shape[0]):
-                string_img = dir_imgs + "img_" + str(j+start_idx) + ".png"
-                string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
-                cv2.imwrite(string_img, imgs[j]*255)
-                cv2.imwrite(string_pred, pred[j]*255)
+            #for j in range(imgs.shape[0]):
+                #string_img = dir_imgs + "img_" + str(j+start_idx) + ".png"
+                #string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
+                #cv2.imwrite(string_img, imgs[j]*255)
+                #cv2.imwrite(string_pred, pred[j]*255)
+                
 
 x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
