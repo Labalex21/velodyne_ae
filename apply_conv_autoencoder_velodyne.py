@@ -156,15 +156,19 @@ def export_encoder():
             imgs = np.array(imgs)
             print(imgs.shape)
             
-            pred = sess.run([encoder], feed_dict={x: imgs})
+            values, pred = sess.run([encoder, output], feed_dict={x: imgs})
+            values = np.array(values)
+            values = np.reshape(values, [values.shape[1], values.shape[2]])
+            encoder_values[start_idx:end_idx, :] = values
+            
             pred = np.array(pred)
-            encoder_values[start_idx:end_idx, :] = np.reshape(pred, [pred.shape[1], pred.shape[2]])
+            pred = np.reshape(pred, [pred.shape[0], pred.shape[1], pred.shape[2]])
 
             for j in range(imgs.shape[0]):
                 string_img = dir_imgs + "img_" + str(j+start_idx) + ".png"
                 string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
                 cv2.imwrite(string_img, imgs[j]*255)
-                cv2.imwrite(string_pred, imgs[j]*255)
+                cv2.imwrite(string_pred, pred[j]*255)
 
 x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
