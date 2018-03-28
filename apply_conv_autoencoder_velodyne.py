@@ -163,8 +163,8 @@ def export_encoder():
             for j in range(imgs.shape[0]):
                 string_img = dir_imgs + "img_" + str(j+start_idx) + ".png"
                 string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
-                cv2.imwrite(string_img, imgs[0]/max_dist*255)
-                cv2.imwrite(string_pred, imgs[0]*255)
+                cv2.imwrite(string_img, imgs[j]/max_dist*255)
+                cv2.imwrite(string_pred, imgs[j]/max_dist*255)
 
 x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
