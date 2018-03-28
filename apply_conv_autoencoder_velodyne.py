@@ -82,7 +82,7 @@ def create_network(x):
     print('fc1: ', fc1.get_shape())
     
     fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
-    print('fc1: ', fc2.get_shape())
+    print('fc2: ', fc2.get_shape())
     
     tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
     print('tfc1: ', tfc1.get_shape())
@@ -119,7 +119,7 @@ def create_network(x):
     output = tconv4
     print('output:', output.get_shape())
 
-    return output, x
+    return output, x, fc2
 
 def export_encoder():
     
@@ -168,7 +168,7 @@ def export_encoder():
 
 x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
-output, x = create_network(x)
+output, x, encoder = create_network(x)
 
 # loss
 loss = tf.reduce_mean(tf.pow(x - output, 2))
