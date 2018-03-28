@@ -10,6 +10,8 @@ import cv2
 import numpy as np
 import datetime as dt
 
+last_encoder_width = 500
+
 # Reset graph
 tf.reset_default_graph()
 
@@ -22,7 +24,7 @@ dir_labels_training = dir_data + "labels_training/"
 dir_imgs_testing = dir_data + "testing/"
 dir_records = dir_data + "records/"
 #path_model = "D:/Velodyne/20180201_icsens_innenstadt/models/conv_dyn_velodyne.ckpt"
-path_model = "../data/models/conv_ae_velodyne.ckpt"
+path_model = "../data/models/conv_ae_velodyne_" + str(last_encoder_width) + ".ckpt"
 
 # log file
 log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
@@ -39,7 +41,6 @@ batch_size = 100
 max_dist = 40
 height = 900
 width = 16
-last_encoder_width = 500
 image_shape = [height,width]
 label_shape = image_shape
 
