@@ -151,7 +151,7 @@ def export_encoder():
                 img = img[:,:,0]/max_dist
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
-                current_string = "str(j) + " filenames[j] + "\n"
+                current_string = str(j) + " " + filenames[j] + "\n"
                 log_file.write(current_string)
             imgs = np.array(imgs)
             print(imgs.shape)
