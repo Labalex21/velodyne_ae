@@ -151,17 +151,10 @@ def export_encoder():
                 img = img[:,:,0]/max_dist
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
-                current_string = str(j) + " " + filenames[j] + "\n"
-                log_file.write(current_string)
             imgs = np.array(imgs)
-            print(imgs.shape)
-            current_string = str(j) + " " + filenames[j] + "\n"
             log_file.write(current_string)
             values, pred = sess.run([encoder, output], feed_dict={x: imgs})
             values = np.array(values)
-            current_string = str(values.shape) + "\n"
-            log_file.write(current_string)
-            #values = np.reshape(values, [values.shape[1], values.shape[2]])
             encoder_values[start_idx:end_idx, :] = values
             
             pred = np.array(pred)
