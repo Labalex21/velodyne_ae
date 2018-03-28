@@ -125,6 +125,8 @@ def export_encoder():
     
     # get all images
     filenames = fh.files_in_folder(dir_data)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
     number_of_scans = filenames.shape[0]
     
     encoder_values = np.zeros((number_of_scans, last_encoder_width))
@@ -149,7 +151,8 @@ def export_encoder():
                 img = img[:,:,0]/max_dist
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
-                print(j,filenames[j])
+                current_string = "str(j) + " filenames[j] + "\n"
+                log_file.write(current_string)
             imgs = np.array(imgs)
             print(imgs.shape)
             
