@@ -23,7 +23,7 @@ dir_records = "../data/imgs/records/"
 path_model = "../data/models_tmp/conv_ae_velodyne.ckpt"
 
 # log file
-log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+log_filename = "../data/logs/log_features_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 #log_filename = "D:/Velodyne/20180201_icsens_innenstadt/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
