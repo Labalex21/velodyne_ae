@@ -92,7 +92,16 @@ def natural_keys(text):
     (See Toothy's implementation in the comments)
     '''
     return [ atoi(c) for c in re.split('(\d+)', text) ]
-    
+  
+def get_scan_trajectory(filename):
+    with open(filename, 'r') as f:
+        positions = []
+        for line in f:
+            values = [float(x) for x in line.strip().split(',')]
+            positions.append(values[2:4])
+            
+    return np.array(positions)
+  
 def get_velodyne_img(filename):
     res_az = 0.4*100 # 0.4 deg times 100
     max_dist = 40
