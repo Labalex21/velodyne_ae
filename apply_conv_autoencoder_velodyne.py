@@ -123,60 +123,49 @@ def create_network(x):
 
     return output, x
 
-def train():
-    print("start training...")
-    with tf.Session()  as sess:
-        sess.run(tf.global_variables_initializer())
-        sess.run(tf.local_variables_initializer())
-        
+def export_encoder():
     
-        # Add ops to save and restore all the variables.
-        saver = tf.train.Saver()
+    # get all images
+    filenames = fh.files_in_folder(dir_data)
+    number_of_scans = filenames.shape[0]
+    
+    encoder_values = np.zeros((number_of_scans, last_encoder_width))
+    k = 1
+    if number_of_scans % 100 == 0:
+        k = 0
         
-        coord = tf.train.Coordinator()
-        threads = tf.train.start_queue_runners(coord=coord)
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
         
-        total_batch = int(number_batches/batch_size)
-        print("total_batch:",total_batch)
-        start = time.time()
-        for e in range(epochs):
-            print("epoch",e)
-            for i in range(total_batch):
-                start2 = time.time()
-                _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
-                            
-                elapsed = time.time() - start
-                elapsed2 = time.time() - start2
-                if i % 20 == 0:
-                    current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
-                    log_file.write(current_string)
-                    log_file.flush()
-                    
-                    print("epoch {}/{}".format(e+1,epochs),
-                          "| batch: {}/{}".format(i+1,total_batch),
-                          "| current los:",current_loss,
-                          "| El. time: ", "{:.2f}".format(elapsed), "s",
-                          "| Batch time: ", "{:.2f}".format(elapsed2), "s")
-                    
-                    for i in range(imgs.shape[0]):
-                        filename_input = dir_test +  str(i) + "_input.png"
-                        filename_output = dir_test +  str(i)  + "_output.png"
-                        cv2.imwrite(filename_input, imgs[i]*255)
-                        cv2.imwrite(filename_output, preds[i]*255)
+        for i in range(int(number_of_scans / 100) + k):
+            start_idx = i * 100
+            end_idx = start_idx + 100
+            if end_idx > number_of_scans:
+                end_idx = number_of_scans
+    
+            imgs = []
+            for j in range(start_idx,end_idx):
+                img,_ = fh.get_velodyne_img(filenames[j])
+                img = img[:,:,0]/max_dist
+                img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                imgs.append(img)
+                print(j,filenames[j])
+            imgs = np.array(imgs)
+            print(imgs.shape)
             
-                    
-         
-        coord.request_stop()
-        coord.join(threads)
-        
-        # Save model
-        save_path = saver.save(sess, path_model)
-        print("Model saved in file: %s" % save_path)
+            pred = sess.run([encoder], feed_dict={x: imgs})
+            pred = np.array(pred)
+            encoder_values[start_idx:end_idx, :] = np.reshape(pred, [pred.shape[1], pred.shape[2]])
 
+            for j in range(imgs.shape[0]):
+                string_img = dir_imgs + "img_" + str(j+start_idx) + ".png"
+                string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
+                cv2.imwrite(string_img, imgs[0]/max_dist*255)
+                cv2.imwrite(string_pred, imgs[0]*255)
 
 x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
-print("number_batches: ",number_batches)
-
 
 output, x = create_network(x)
 
@@ -186,6 +175,5 @@ loss = tf.reduce_mean(tf.pow(x - output, 2))
 # optimizer
 optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
-train()
+export_encoder()
 log_file.close()
-#test_prediction()
