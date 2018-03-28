@@ -13,6 +13,8 @@ import datetime as dt
 # Reset graph
 tf.reset_default_graph()
 
+last_encoder_width = 500
+
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 #dir_test = "D:/Velodyne/20180201_icsens_innenstadt/imgs/result_ae/"
 dir_data = "../data/scans/"
@@ -39,7 +41,6 @@ batch_size = 100
 max_dist = 40
 height = 900
 width = 16
-last_encoder_width = 500
 image_shape = [height,width]
 label_shape = image_shape
 
