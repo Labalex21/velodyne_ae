@@ -20,7 +20,7 @@ dir_imgs = "../data/imgs/ae_input/"
 dir_pred = "../data/imgs/ae_pred/"
 dir_records = "../data/imgs/records/"
 #path_model = "D:/Velodyne/20180201_icsens_innenstadt/models/conv_dyn_velodyne.ckpt"
-path_model = "../data/models_tmp/conv_ae_velodyne.ckpt"
+path_model = "../data/models/conv_ae_velodyne.ckpt"
 
 # log file
 log_filename = "../data/logs/log_features_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
