@@ -143,7 +143,7 @@ def train():
             print("epoch",e)
             for i in range(total_batch):
                 start2 = time.time()
-                current_loss,imgs,preds = sess.run([loss,x, output])
+                _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
