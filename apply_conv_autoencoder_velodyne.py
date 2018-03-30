@@ -17,7 +17,7 @@ last_encoder_width = 500
 
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 #dir_test = "D:/Velodyne/20180201_icsens_innenstadt/imgs/result_ae/"
-dir_data = "../data/scans/"
+dir_data = "../data/scans_all/"
 dir_imgs = "../data/imgs/ae_input/"
 dir_pred = "../data/imgs/ae_pred/"
 dir_records = "../data/imgs/records/"
