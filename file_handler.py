@@ -43,8 +43,7 @@ def write_tfrecord(writer, input, output):
         writer.write(example.SerializeToString())
 
 def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
-    feature = {'train/input': tf.FixedLenFeature([], tf.string),
-               'train/output': tf.FixedLenFeature([], tf.string)}
+    feature = {'train/input': tf.FixedLenFeature([], tf.string)}
         
     info_filenames = glob.glob(os.path.join(folder, '*.info'))
     number_batches = 0
@@ -70,17 +69,11 @@ def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
     # Reshape image data into the original shape
     image = tf.reshape(image, image_shape, name='reshape_image')
     image = tf.to_float(image)
-    
-    # Cast label data into bool
-    label = tf.decode_raw(features['train/output'], tf.float64)
-    #label = tf.multiply(label-1,-1)
-    label = tf.reshape(label, image_shape, name='reshape_label')
-    label = tf.to_float(label)
 
     # Creates batches by randomly shuffling tensors    
-    images, labels = tf.train.shuffle_batch([image, label], batch_size=batch_size, capacity=100000, allow_smaller_final_batch = True, num_threads=1, min_after_dequeue=0)
+    images = tf.train.shuffle_batch([image, label], batch_size=batch_size, capacity=100000, allow_smaller_final_batch = True, num_threads=1, min_after_dequeue=0)
     
-    return images, labels, number_batches
+    return images, number_batches
 
 def atoi(text):
     return int(text) if text.isdigit() else text
