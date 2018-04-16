@@ -18,17 +18,11 @@ tf.reset_default_graph()
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 #dir_test = "D:/Velodyne/20180201_icsens_innenstadt/imgs/result_ae/"
 dir_data = "../data/imgs/"
-dir_test = "../data//imgs/result_ae/"
-dir_imgs_training = dir_data + "training/"
-dir_labels_training = dir_data + "labels_training/"
-dir_imgs_testing = dir_data + "testing/"
-dir_records = dir_data + "records/"
-#path_model = "D:/Velodyne/20180201_icsens_innenstadt/models/conv_dyn_velodyne.ckpt"
-path_model = "../data/models/conv_ae_velodyne_" + str(last_encoder_width) + ".ckpt"
+dir_records = "../data/20180201/records/"
+path_model = "../data/20180201/models/conv_ae_velodyne_" + str(last_encoder_width) + ".ckpt"
 
 # log file
 log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
-#log_filename = "D:/Velodyne/20180201_icsens_innenstadt/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
