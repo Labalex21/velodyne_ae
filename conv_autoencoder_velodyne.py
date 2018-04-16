@@ -29,7 +29,7 @@ log_file.flush()
 
 # input data parameters
 epochs = 200
-batch_size = 20
+batch_size = 100
 
 # images parameters
 max_dist = 40
