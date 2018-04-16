@@ -16,7 +16,7 @@ last_encoder_width = 500
 tf.reset_default_graph()
 
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
-#dir_test = "D:/Velodyne/20180201_icsens_innenstadt/imgs/result_ae/"
+dir_test = "../data/20180201/imgs/result_ae/"
 dir_data = "../data/imgs/"
 dir_records = "../data/20180201/records/"
 path_model = "../data/20180201/models/conv_ae_velodyne_" + str(last_encoder_width) + ".ckpt"
