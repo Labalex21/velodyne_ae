@@ -52,7 +52,7 @@ n_features = 32
 patch_size = 3
 strides = [1, 1, 1, 1]
 
-def create_network(x):
+def create_network(x, number_fc, fc_widths):
     print('input: ',x.get_shape())
     x = tf.reshape(x, [tf.shape(x)[0], height, width, 1], name='reshape_image1')
     print(x)
@@ -81,18 +81,29 @@ def create_network(x):
 #    print('mpool4:', conv4.get_shape())
 #    
 #
-    fc1 = tflearn.fully_connected(conv3, last_encoder_width*2, activation = 'leaky_relu')
-    print('fc1: ', fc1.get_shape())
+    fc = conv3
+    for i in range(number_fc):
+        fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
+        print('fc: ', fc.get_shape())
+       
+    tfc = fc
+    for i in range(number_fc-1):
+        tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
+        print('tfc: ', tfc.get_shape())
+        
+    tfc = tflearn.fully_connected(tfc, 225*4*n_features*2, activation = 'leaky_relu')
+    tfc = tf.reshape(tfc, [-1, 225, 4, n_features*2])
+    print('tfc: ', tfc.get_shape())
+
+        #fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
+        #print('fc2: ', fc2.get_shape())
     
-    fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
-    print('fc2: ', fc2.get_shape())
+    #tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
+    #print('tfc1: ', tfc1.get_shape())
     
-    tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
-    print('tfc1: ', tfc1.get_shape())
-    
-    tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
-    tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
-    print('tfc2: ', tfc2.get_shape())
+    #tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
+    #tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
+    #print('tfc2: ', tfc2.get_shape())
     
 #    last = fully_connected(tfc2, tf.transpose(weights['wfc1']), biases['b3_dec'])
 #    # tfc2 = tf.reshape(tfc2, [-1, 1160*2, 1, n_features])
@@ -182,7 +193,7 @@ def export_encoder():
 
 x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
-output, x, encoder = create_network(x)
+output, x, encoder = create_network(x,2,np.array([last_encoder_width*2,last_encoder_width]))
 
 # loss
 loss = tf.reduce_mean(tf.pow(x - output, 2))
