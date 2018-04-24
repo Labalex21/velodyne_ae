@@ -106,7 +106,7 @@ def get_velodyne_img(filename):
             values = [float(x) for x in line.strip().split(',')]
             if len(values) < 1:
                 continue
-            row = np.mod(900-int(values[5]/res_az)+300,900)
+            row = np.mod(900-int(values[5]/res_az)+225,900)
             col = 15-int((values[6]+15)/2)
 #            dyn = bool(values[7])
 #            if dyn:
