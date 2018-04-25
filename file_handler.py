@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug  3 15:45:48 2017
-
 @author: schlichting
 """
 
@@ -94,6 +93,15 @@ def get_scan_trajectory(filename):
             positions.append(values[2:4])
             
     return np.array(positions)
+
+def get_scan_trajectory_csv(filename):
+    with open(filename, 'r') as f:
+        positions = []
+        for line in f:
+            values = [float(x) for x in line.strip().split(',')]
+            positions.append([values[0], values[2], values[3]])
+            
+    return np.array(positions)
   
 def get_velodyne_img(filename):
     res_az = 0.4*100 # 0.4 deg times 100
@@ -120,6 +128,27 @@ def get_velodyne_img(filename):
             img_dist[row,col,0:3] = values[4] # distance
             img_int[row,col,0:3] = values[3] # intensity
     return img_dist, img_int
+
+def get_velodyne_img_csv(filename):
+    res_az = 0.4*100 # 0.4 deg times 100
+    img_dist = np.zeros([900,16,3])
+    img_int = np.zeros([900,16,3])
+    with open(filename, 'r') as f:
+        next(f)
+        for line in f:
+            values = [float(x) for x in line.strip().split(',')]
+            if len(values) < 1:
+                continue
+            row = np.mod(900-int(values[8]/res_az)+225,900)
+            col = 15-int((values[12]+15)/2)
+            img_dist[row,col,0:3] = values[9] # distance
+            img_int[row,col,0:3] = values[6] # intensity
+    return img_dist, img_int
+
+def files_in_folder_csv(directory):
+    filenames = glob.glob(os.path.join(directory, '*/*.csv'), recursive=True)
+    filenames.sort(key = natural_keys)
+    return np.array(filenames)
 
 def files_in_folder(directory):
     filenames = glob.glob(os.path.join(directory, '*.*'))
