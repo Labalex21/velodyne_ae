@@ -190,8 +190,60 @@ def export_encoder():
                 #cv2.imwrite(string_img, imgs[j]*255)
                 #cv2.imwrite(string_pred, pred[j]*255)
                 
+def export_encoder_csv(path_data, path_export, path_current_traj):
+    # get trajectory
+    traj = fh.get_scan_trajectory_csv(path_current_traj)
+    print(traj[0])
+    
+    # get all images
+    #filenames = fh.files_in_folder(dir_data)
+    filenames = fh.files_in_folder_csv(dir_data_icsens)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
+    current_string = str(traj.shape[0]) + " scan positions\n"
+    log_file.write(current_string)
+    number_of_scans = traj.shape[0]
+    
+    # save feature values here
+    encoder_values = np.zeros((number_of_scans, last_encoder_width))
+    k = 1
+    if number_of_scans % 100 == 0:
+        k = 0
+        
+    
+    # get feature values
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
+        
+        for i in range(int(number_of_scans / 100) + k):
+            start_idx = i * 100
+            end_idx = start_idx + 100
+            if end_idx > number_of_scans:
+                end_idx = number_of_scans
+    
+            imgs = []
+            for j in range(start_idx,end_idx):
+                img,_ = fh.get_velodyne_img(filenames[traj[j,0]])
+                #img = img[:,:,0]/max_dist
+                #img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                imgs.append(img)
+            imgs = np.array(imgs)
+            current_string = str(j) + " " + str(filenames[traj[j,0]]) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
+            values, pred = sess.run([encoder, output], feed_dict={x: imgs})
+            values = np.array(values)
+            encoder_values[start_idx:end_idx, :] = values
+            
+    # export values to json file
+    traj = traj[:,1:3]
+    with open(dir_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+                
 
-x, labels, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
+x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
 output, x, encoder = create_network(x,2,np.array([last_encoder_width*2,last_encoder_width]))
 
