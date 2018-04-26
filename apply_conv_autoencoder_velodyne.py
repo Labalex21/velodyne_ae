@@ -161,7 +161,7 @@ def export_encoder(path_data, path_export, path_current_traj):
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
                 
-            start_idx > 1000:
+            if start_idx > 1000:
                 break
     
             imgs = []
@@ -224,7 +224,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
                 
-            start_idx > 1000:
+            if start_idx > 1000:
                 break
     
             imgs = []
