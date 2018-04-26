@@ -15,6 +15,9 @@ import sequence_analysis as seq
 tf.reset_default_graph()
 
 last_encoder_width = 500
+number_of_fc = 2
+number_of_conv = 3
+fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 #dir_test = "D:/Velodyne/20180201_icsens_innenstadt/imgs/result_ae/"
@@ -162,7 +165,7 @@ def export_encoder(path_data, path_export, path_current_traj):
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
                 
-            if start_idx > 1000:
+            if start_idx > 200:
                 break
     
             imgs = []
@@ -225,7 +228,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
                 
-            if start_idx > 1000:
+            if start_idx > 200:
                 break
     
             imgs = []
@@ -251,7 +254,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
 
 x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 
-output, x, encoder = create_network(x,2,np.array([last_encoder_width*2,last_encoder_width]))
+output, x, encoder = create_network(x,number_of_fc,fcs)
 
 # loss
 loss = tf.reduce_mean(tf.pow(x - output, 2))
@@ -260,21 +263,21 @@ loss = tf.reduce_mean(tf.pow(x - output, 2))
 optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
 path_traj = '../data/traj/scan_traj_20180201.txt'
-dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '.json'
+dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
 dir_data = '../data/20180201/scans/'
 export_encoder(dir_data, dir_export_20180201, path_traj)
 
 path_traj = '../data/traj/scan_traj_20180410_2.txt'
-dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '.json'
+dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
 dir_data = '../data/20180410/scans_rot_2/'
 export_encoder(dir_data, dir_export_20180410_2, path_traj)
 
-dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '.json'
+dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
 dir_data_icsens = "../data/20180201/scans_icsens/"
 path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
 export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
 
-dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '.json'
+dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
 dir_data_herrenhausen = "../data/20180206/scans/"
 path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
 export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
@@ -282,5 +285,7 @@ export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_her
 cluster_size = 200
 sequence_length = 200
 compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
+current_string = "completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+log_file.write(current_string)
 
 log_file.close()
