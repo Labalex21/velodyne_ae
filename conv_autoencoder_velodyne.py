@@ -71,7 +71,7 @@ def create_network(x, number_fc, fc_widths):
         fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
         print('fc: ', fc.get_shape())
     
-    encoder = fc
+    #encoder = fc
     # start decoder
     tfc = fc
     for i in range(number_fc-1):
@@ -189,7 +189,7 @@ def export_encoder(path_data, path_export, path_current_traj):
             current_string = str(j) + " " + str(filenames[j]) + "\n"
             log_file.write(current_string)
             log_file.flush()
-            values, pred = sess.run([encoder, output], feed_dict={x: imgs})
+            values, pred = sess.run([fc, output], feed_dict={x: imgs})
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
@@ -236,9 +236,6 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             end_idx = start_idx + 100
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
-                
-            if start_idx > 200:
-                break
     
             imgs = []
             for j in range(start_idx,end_idx):
@@ -251,7 +248,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
             log_file.write(current_string)
             log_file.flush()
-            values, pred = sess.run([encoder, output], feed_dict={x: imgs})
+            values, pred = sess.run([fc, output], feed_dict={x: imgs})
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
