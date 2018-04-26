@@ -253,5 +253,9 @@ loss = tf.reduce_mean(tf.pow(x - output, 2))
 # optimizer
 optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
-export_encoder()
+dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '.json'
+dir_data_icsens = "../data/20180201/scans_icsens/"
+path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
+export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+#export_encoder()
 log_file.close()
