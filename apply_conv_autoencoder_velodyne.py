@@ -228,7 +228,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
                 idx = int(traj[j,0])
                 img,_ = fh.get_velodyne_img_csv(filenames[idx])
                 #img = img[:,:,0]/max_dist
-                #img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
             current_string = str(j) + " " + str(filenames[start_idx]) + "\n"
