@@ -17,14 +17,12 @@ last_encoder_width = 500
 
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 #dir_test = "D:/Velodyne/20180201_icsens_innenstadt/imgs/result_ae/"
-dir_data = "../data/scans_all/"
 dir_imgs = "../data/imgs/ae_input/"
 dir_pred = "../data/imgs/ae_pred/"
 dir_records = "../data/imgs/records/"
 #path_model = "D:/Velodyne/20180201_icsens_innenstadt/models/conv_dyn_velodyne.ckpt"
 path_model = "../data/models/conv_ae_velodyne.ckpt"
-path_traj = '../data/traj/scan_traj_20180201.txt'
-dir_export = '../data/features/velodyne_' + str(last_encoder_width) + '.json'
+
 
 # log file
 log_filename = "../data/logs/log_features_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
@@ -254,9 +252,24 @@ loss = tf.reduce_mean(tf.pow(x - output, 2))
 # optimizer
 optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
+path_traj = '../data/traj/scan_traj_20180201.txt'
+dir_export = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '.json'
+dir_data = '../data/20180201/scans/'
+export_encoder(dir_data, dir_export, path_traj)
+
+path_traj = '../data/traj/scan_traj_20180410_2.txt'
+dir_export = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '.json'
+dir_data = '../data/20180410/scans_rot_2/'
+export_encoder(dir_data, dir_export, path_traj)
+
 dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '.json'
 dir_data_icsens = "../data/20180201/scans_icsens/"
 path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
 export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
-#export_encoder()
+
+dir_export_icsens = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '.json'
+dir_data_icsens = "../data/20180206/scans/"
+path_traj_icsens = '../data/traj/scan_traj_20180206.txt'
+export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+
 log_file.close()
