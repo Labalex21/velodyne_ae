@@ -16,11 +16,10 @@ number_of_fc = 2
 number_of_conv = 3
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
-#dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 dir_test = "../data/20180201/imgs/result_ae/"
 dir_data = "../data/imgs/"
 dir_records = "../data/20180201/records/"
-path_model = "../data/20180201/models/conv_ae_velodyne_" + str(last_encoder_width) + ".ckpt"
+path_model = "../data/20180201/models/conv_ae_velodyne_" + str(last_encoder_width) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
 
 # log file
 log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
