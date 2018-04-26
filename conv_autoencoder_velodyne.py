@@ -232,7 +232,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
 # Reset graph
 tf.reset_default_graph()
         
-x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
+x, number_batches = fh.read_tfrecord(log_file, dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 print("number_batches: ",number_batches)
 
 
