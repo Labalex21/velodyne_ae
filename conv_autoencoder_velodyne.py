@@ -9,11 +9,15 @@ import file_handler as fh
 import cv2
 import numpy as np
 import datetime as dt
-
-last_encoder_width = 500
+import sequence_analysis as seq
 
 # Reset graph
 tf.reset_default_graph()
+
+last_encoder_width = 500
+number_of_fc = 2
+number_of_conv = 3
+fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 #dir_data = "D:/Velodyne/20180201_icsens_innenstadt/imgs/"
 dir_test = "../data/20180201/imgs/result_ae/"
@@ -28,7 +32,8 @@ log_file.write("start\n")
 log_file.flush()
 
 # input data parameters
-epochs = 200
+#epochs = 200
+epochs = 1
 batch_size = 100
 
 # images parameters
@@ -150,7 +155,85 @@ def train():
         save_path = saver.save(sess, path_model)
         print("Model saved in file: %s" % save_path)
 
+def export_encoder(path_data, path_export, path_current_traj):
+    # get trajectory
+    traj = fh.get_scan_trajectory(path_current_traj)
+    
+    # get all images
+    filenames = fh.files_in_folder(path_data)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
+    number_of_scans = filenames.shape[0]
+    
+    # save feature values here
+    encoder_values = np.zeros((number_of_scans, last_encoder_width))
+    k = 1
+    if number_of_scans % 100 == 0:
+        k = 0
+    
+    # get feature values
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
+        
+        for i in range(int(number_of_scans / 100) + k):
+            start_idx = i * 100
+            end_idx = start_idx + 100
+            if end_idx > number_of_scans:
+                end_idx = number_of_scans
+                
+            if start_idx > 200:
+                break
+    
+            imgs = []
+            for j in range(start_idx,end_idx):
+                img,_ = fh.get_velodyne_img(filenames[j])
+                img = img[:,:,0]
+                img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                imgs.append(img)
+            imgs = np.array(imgs)
+            current_string = str(j) + " " + str(filenames[j]) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
+            values, pred = sess.run([encoder, output], feed_dict={x: imgs})
+            values = np.array(values)
+            encoder_values[start_idx:end_idx, :] = values
+            
+    # export values to json file
+    with open(path_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+            
+            #pred = np.array(pred)
+            #pred = np.reshape(pred, [pred.shape[0], pred.shape[1], pred.shape[2]])
 
+            #for j in range(imgs.shape[0]):
+                #string_img = dir_imgs + "img_" + str(j+start_idx) + ".png"
+                #string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
+                #cv2.imwrite(string_img, imgs[j]*255)
+                #cv2.imwrite(string_pred, pred[j]*255)
+                
+def export_encoder_csv(path_data, path_export, path_current_traj):
+    # get trajectory
+    traj = fh.get_scan_trajectory_csv(path_current_traj)
+    print(traj[0])
+    
+    # get all images
+    #filenames = fh.files_in_folder(dir_data)
+    filenames = fh.files_in_folder_csv(dir_data_icsens)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
+    current_string = str(traj.shape[0]) + " scan positions\n"
+    log_file.write(current_string)
+    number_of_scans = traj.shape[0]
+    
+    # save feature values here
+    encoder_values = np.zeros((number_of_scans, last_encoder_width))
+    k = 1
+    if number_of_scans % 100 == 0:
+        k = 0
+        
+        
 x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 print("number_batches: ",number_batches)
 
@@ -163,5 +246,36 @@ loss = tf.reduce_mean(tf.pow(x - output, 2))
 # optimizer
 optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
+#train
 train()
+
+# export encoder
+path_traj = '../data/traj/scan_traj_20180201.txt'
+dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+dir_data = '../data/20180201/scans/'
+export_encoder(dir_data, dir_export_20180201, path_traj)
+
+path_traj = '../data/traj/scan_traj_20180410_2.txt'
+dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+dir_data = '../data/20180410/scans_rot_2/'
+export_encoder(dir_data, dir_export_20180410_2, path_traj)
+
+dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+dir_data_icsens = "../data/20180201/scans_icsens/"
+path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
+export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+
+dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+dir_data_herrenhausen = "../data/20180206/scans/"
+path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
+export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
+
+
+# get results
+cluster_size = 200
+sequence_length = 200
+compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
+current_string = "completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+log_file.write(current_string)
+
 log_file.close()
