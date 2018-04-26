@@ -62,7 +62,7 @@ def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
     features = tf.parse_single_example(serialized_example, features=feature)
     
     # Convert the image data from string back to the numbers
-    image = tf.decode_raw(features['train/input'], tf.float64)
+    image = tf.decode_raw(features['train/input'], tf.float32)
     image = tf.to_float(image)
     
     # Reshape image data into the original shape
