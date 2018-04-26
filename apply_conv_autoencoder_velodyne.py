@@ -226,13 +226,12 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             imgs = []
             for j in range(start_idx,end_idx):
                 idx = int(traj[j,0])
-                log_file.write(str(idx))
-                img,_ = fh.get_velodyne_img(filenames[traj[j,0]])
+                img,_ = fh.get_velodyne_img(filenames[idx])
                 #img = img[:,:,0]/max_dist
                 #img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(j) + " " + str(filenames[traj[j,0]]) + "\n"
+            current_string = str(j) + " " + str(filenames[start_idx]) + "\n"
             log_file.write(current_string)
             log_file.flush()
             values, pred = sess.run([encoder, output], feed_dict={x: imgs})
