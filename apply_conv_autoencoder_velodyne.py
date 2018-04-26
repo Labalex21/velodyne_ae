@@ -245,7 +245,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             
     # export values to json file
     traj = traj[:,1:3]
-    with open(dir_export, 'w') as f:
+    with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
                 
 
