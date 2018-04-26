@@ -71,6 +71,7 @@ def create_network(x, number_fc, fc_widths):
         fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
         print('fc: ', fc.get_shape())
     
+    encoder = fc
     # start decoder
     tfc = fc
     for i in range(number_fc-1):
