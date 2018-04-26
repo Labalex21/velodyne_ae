@@ -71,7 +71,7 @@ def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
 
     # Creates batches by randomly shuffling tensors
     # https://stackoverflow.com/questions/43028683/whats-going-on-in-tf-train-shuffle-batch-and-tf-train-batch?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-    images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=number_batches*batch_size*num_epochs, allow_smaller_final_batch = True, min_after_dequeue=batch_size)
+    images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=batch_size, allow_smaller_final_batch = True, min_after_dequeue=batch_size)
     #images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=number_batches*batch_size*num_epochs, enqueue_many=True, allow_smaller_final_batch = True)
    
     return images, number_batches
