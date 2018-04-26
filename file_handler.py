@@ -69,7 +69,8 @@ def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
     image = tf.reshape(image, image_shape, name='reshape_image')
     image = tf.to_float(image)
 
-    # Creates batches by randomly shuffling tensors    
+    # Creates batches by randomly shuffling tensors
+    # https://stackoverflow.com/questions/43028683/whats-going-on-in-tf-train-shuffle-batch-and-tf-train-batch?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
     images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=2147483647, allow_smaller_final_batch = True, num_threads=1, min_after_dequeue=batch_size)
     
     return images, number_batches
