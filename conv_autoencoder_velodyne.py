@@ -39,7 +39,6 @@ image_shape = [height,width]
 label_shape = image_shape
 
 # network parameters
-keep_prob = 0.5
 learning_rate = 0.002
 
 n_features = 32
@@ -66,21 +65,13 @@ def create_network(x):
     
     conv3 = tflearn.conv_2d(maxPool2,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv3')
     print('conv3: ', conv3.get_shape())
-#    maxPool3 = tflearn.layers.conv.max_pool_2d (conv3, 2, padding='same')
-#    print('mPool3:', maxPool3.get_shape())
-    
-#    conv4 = tflearn.conv_2d(maxPool3,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu')
-#    print('conv4: ', conv4.get_shape())
-#    maxPool4 = tflearn.layers.conv.max_pool_2d (conv4, 2, padding='same')
-#    print('mpool4:', conv4.get_shape())
-#    
-#
 
     fc = conv3
     for i in range(number_fc):
         fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
         print('fc: ', fc.get_shape())
-       
+    
+    # start decoder
     tfc = fc
     for i in range(number_fc-1):
         tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
@@ -90,31 +81,7 @@ def create_network(x):
     tfc = tf.reshape(tfc, [-1, 225, 4, n_features*2])
     print('tfc: ', tfc.get_shape())
     
-    #fc1 = tflearn.fully_connected(conv3, last_encoder_width*2, activation = 'leaky_relu')
-    #print('fc1: ', fc1.get_shape())
     
-    #fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
-    #print('fc1: ', fc2.get_shape())
-    
-    #tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
-    #print('tfc1: ', tfc1.get_shape())
-    
-    #tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
-    #tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
-    #print('tfc2: ', tfc2.get_shape())
-    
-#    last = fully_connected(tfc2, tf.transpose(weights['wfc1']), biases['b3_dec'])
-#    # tfc2 = tf.reshape(tfc2, [-1, 1160*2, 1, n_features])
-#    last = tf.reshape(last, [-1, 1160, 1, n_features])
-#    print('tfc3: ', last.get_shape())
-    
-#    upsample1 = tflearn.upsample_2d(maxPool4,2)
-#    print('usamp1:', upsample1.get_shape())
-#    tconv1 = tflearn.conv_2d_transpose(fc1,n_features*4,patch_size,maxPool3.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu')
-#    print('tconv1:', tconv1.get_shape())
-    
-#    upsample2 = tflearn.upsample_2d(tconv1,2)
-#    print('usamp2:', upsample2.get_shape())
     tconv2 = tflearn.conv_2d_transpose(tfc,n_features*2,patch_size,maxPool2.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv2')
     print('tconv2:', tconv2.get_shape())
     
@@ -198,4 +165,3 @@ optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
 train()
 log_file.close()
-#test_prediction()
