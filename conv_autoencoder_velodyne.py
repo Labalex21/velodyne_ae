@@ -46,7 +46,7 @@ n_features = 32
 patch_size = 3
 strides = [1, 1, 1, 1]
 
-def create_network(x):
+def create_network(x, number_fc, fc_widths):
     print('input: ',x.get_shape())
     x = tf.reshape(x, [tf.shape(x)[0], height, width, 1], name='reshape_image1')
     print(x)
