@@ -11,9 +11,6 @@ import numpy as np
 import datetime as dt
 import sequence_analysis as seq
 
-# Reset graph
-tf.reset_default_graph()
-
 last_encoder_width = 500
 number_of_fc = 2
 number_of_conv = 3
@@ -233,6 +230,8 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
     if number_of_scans % 100 == 0:
         k = 0
         
+# Reset graph
+tf.reset_default_graph()
         
 x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=epochs)
 print("number_batches: ",number_batches)
