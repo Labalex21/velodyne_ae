@@ -41,6 +41,7 @@ def write_tfrecord(writer, input, output):
         example= tf.train.Example(features=tf.train.Features(feature = feature))
         writer.write(example.SerializeToString())
 
+# TODO: Kleines  Netz schreiben, das nichts weiter macht und gucken, warum zwei Bilder genommen werden
 def read_tfrecord(log_file, folder, image_shape, batch_size = 100, num_epochs = 100):
     feature = {'train/input': tf.FixedLenFeature([], tf.string)}
         
@@ -63,6 +64,7 @@ def read_tfrecord(log_file, folder, image_shape, batch_size = 100, num_epochs = 
     
     # Convert the image data from string back to the numbers
     image = tf.decode_raw(features['train/input'], tf.float64)
+    #image = tf.decode_raw(features['train/input'], tf.float32)
     
     current_string = str(image.get_shape().as_list()) + "\n"
     log_file.write(current_string)
