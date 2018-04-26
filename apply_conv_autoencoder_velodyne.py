@@ -9,6 +9,7 @@ import file_handler as fh
 import cv2
 import numpy as np
 import datetime as dt
+import sequence_analysis as seq
 
 # Reset graph
 tf.reset_default_graph()
@@ -259,23 +260,27 @@ loss = tf.reduce_mean(tf.pow(x - output, 2))
 optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
 path_traj = '../data/traj/scan_traj_20180201.txt'
-dir_export = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '.json'
+dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '.json'
 dir_data = '../data/20180201/scans/'
-export_encoder(dir_data, dir_export, path_traj)
+export_encoder(dir_data, dir_export_20180201, path_traj)
 
 path_traj = '../data/traj/scan_traj_20180410_2.txt'
-dir_export = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '.json'
+dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '.json'
 dir_data = '../data/20180410/scans_rot_2/'
-export_encoder(dir_data, dir_export, path_traj)
+export_encoder(dir_data, dir_export_20180410_2, path_traj)
 
 dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '.json'
 dir_data_icsens = "../data/20180201/scans_icsens/"
 path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
 export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
 
-dir_export_icsens = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '.json'
-dir_data_icsens = "../data/20180206/scans/"
-path_traj_icsens = '../data/traj/scan_traj_20180206.txt'
-export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '.json'
+dir_data_herrenhausen = "../data/20180206/scans/"
+path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
+export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
+
+cluster_size = 200
+sequence_length = 200
+compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
 
 log_file.close()
