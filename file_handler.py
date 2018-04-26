@@ -41,7 +41,7 @@ def write_tfrecord(writer, input, output):
         example= tf.train.Example(features=tf.train.Features(feature = feature))
         writer.write(example.SerializeToString())
 
-def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
+def read_tfrecord(log_file, folder, image_shape, batch_size = 100, num_epochs = 100):
     feature = {'train/input': tf.FixedLenFeature([], tf.string)}
         
     info_filenames = glob.glob(os.path.join(folder, '*.info'))
@@ -62,18 +62,34 @@ def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
     features = tf.parse_single_example(serialized_example, features=feature)
     
     # Convert the image data from string back to the numbers
-    image = tf.decode_raw(features['train/input'], tf.float32)
+    image = tf.decode_raw(features['train/input'], tf.float64)
+    
+    current_string = str(tf.shape(image)) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     image = tf.to_float(image)
+    
+    current_string = str(tf.shape(image)) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     
     # Reshape image data into the original shape
     image = tf.reshape(image, image_shape, name='reshape_image')
+    current_string = str(tf.shape(image)) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     image = tf.to_float(image)
+    current_string = str(tf.shape(image)) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
 
     # Creates batches by randomly shuffling tensors
     # https://stackoverflow.com/questions/43028683/whats-going-on-in-tf-train-shuffle-batch-and-tf-train-batch?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
     images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=batch_size*2, allow_smaller_final_batch = True, min_after_dequeue=batch_size)
     #images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=number_batches*batch_size*num_epochs, enqueue_many=True, allow_smaller_final_batch = True)
-   
+    current_string = str(tf.shape(images)) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     return images, number_batches
 
 def atoi(text):
