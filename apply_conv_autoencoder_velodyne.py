@@ -135,12 +135,12 @@ def create_network(x, number_fc, fc_widths):
 
     return output, x, fc
 
-def export_encoder():
+def export_encoder(path_data, path_export, path_current_traj):
     # get trajectory
-    traj = fh.get_scan_trajectory(path_traj)
+    traj = fh.get_scan_trajectory(path_current_traj)
     
     # get all images
-    filenames = fh.files_in_folder(dir_data)
+    filenames = fh.files_in_folder(path_data)
     current_string = str(filenames.shape[0]) + " files\n"
     log_file.write(current_string)
     number_of_scans = filenames.shape[0]
@@ -178,7 +178,7 @@ def export_encoder():
             encoder_values[start_idx:end_idx, :] = values
             
     # export values to json file
-    with open(dir_export, 'w') as f:
+    with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
             
             #pred = np.array(pred)
