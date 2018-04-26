@@ -231,7 +231,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(j) + " " + str(filenames[start_idx]) + "\n"
+            current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
             log_file.write(current_string)
             log_file.flush()
             values, pred = sess.run([encoder, output], feed_dict={x: imgs})
