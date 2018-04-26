@@ -28,8 +28,7 @@ log_file.write("start\n")
 log_file.flush()
 
 # input data parameters
-#epochs = 200
-epochs = 1
+epochs = 100
 batch_size = 100
 
 # images parameters
@@ -178,9 +177,6 @@ def export_encoder(path_data, path_export, path_current_traj):
             end_idx = start_idx + 100
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
-                
-            if start_idx > 200:
-                break
     
             imgs = []
             for j in range(start_idx,end_idx):
@@ -212,7 +208,6 @@ def export_encoder(path_data, path_export, path_current_traj):
 def export_encoder_csv(path_data, path_export, path_current_traj):
     # get trajectory
     traj = fh.get_scan_trajectory_csv(path_current_traj)
-    print(traj[0])
     
     # get all images
     #filenames = fh.files_in_folder(dir_data)
@@ -228,6 +223,41 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
     k = 1
     if number_of_scans % 100 == 0:
         k = 0
+        
+    # get feature values
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
+        
+        for i in range(int(number_of_scans / 100) + k):
+            start_idx = i * 100
+            end_idx = start_idx + 100
+            if end_idx > number_of_scans:
+                end_idx = number_of_scans
+                
+            if start_idx > 200:
+                break
+    
+            imgs = []
+            for j in range(start_idx,end_idx):
+                idx = int(traj[j,0])
+                img,_ = fh.get_velodyne_img_csv(filenames[idx])
+                img = img[:,:,0]
+                img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                imgs.append(img)
+            imgs = np.array(imgs)
+            current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
+            values, pred = sess.run([encoder, output], feed_dict={x: imgs})
+            values = np.array(values)
+            encoder_values[start_idx:end_idx, :] = values
+            
+    # export values to json file
+    traj = traj[:,1:3]
+    with open(path_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
         
 # Reset graph
 tf.reset_default_graph()
