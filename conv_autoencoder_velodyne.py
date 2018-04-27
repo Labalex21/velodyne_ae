@@ -99,7 +99,7 @@ def create_network(x, number_fc, fc_widths):
     output = tconv4
     print('output:', output.get_shape())
 
-    return output, x
+    return output, x, fc
 
 def train():
     print("start training...")
@@ -264,7 +264,7 @@ x, number_batches = fh.read_tfrecord(log_file, dir_records, image_shape, batch_s
 print("number_batches: ",number_batches)
 
 
-output, x = create_network(x,2,np.array([last_encoder_width*2,last_encoder_width]))
+output, x, fc = create_network(x,2,np.array([last_encoder_width*2,last_encoder_width]))
 
 # loss
 loss = tf.reduce_mean(tf.pow(x - output, 2))
