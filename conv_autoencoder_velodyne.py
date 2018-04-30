@@ -331,7 +331,7 @@ for i in range(fc_array.shape[0]):
     cluster_size = 200
     sequence_length = 200
     compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
-    current_string = "completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    current_string = "features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
-
+    res_file.write(current_string)
     log_file.close()
