@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 import datetime as dt
 import sequence_analysis as seq
+import json
 
 last_encoder_width = 500
 number_of_fc = 2
