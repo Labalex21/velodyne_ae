@@ -29,7 +29,7 @@ log_file.write("start\n")
 log_file.flush()
 
 # input data parameters
-epochs = 100
+epochs = 20
 batch_size = 100
 
 # images parameters
