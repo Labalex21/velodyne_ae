@@ -41,8 +41,43 @@ def write_tfrecord(writer, input, output):
         example= tf.train.Example(features=tf.train.Features(feature = feature))
         writer.write(example.SerializeToString())
 
+        
+def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
+    feature = {'train/input': tf.FixedLenFeature([], tf.string)}
+        
+    info_filenames = glob.glob(os.path.join(folder, '*.info'))
+    number_batches = 0
+    for filename in info_filenames:
+        with open(filename,'r') as f:
+            l = f.readline()
+            number_batches += int(l)
+                                             
+    path_records = folder + "*.tfrecord"
+    filename_queue = tf.train.string_input_producer(tf.train.match_filenames_once(path_records), num_epochs=num_epochs)
+    
+    # Define a reader and read the next record
+    reader = tf.TFRecordReader()
+    _, serialized_example = reader.read(filename_queue)
+    
+    # Decode the record read by the reader
+    features = tf.parse_single_example(serialized_example, features=feature)
+    
+    # Convert the image data from string back to the numbers
+    image = tf.decode_raw(features['train/input'], tf.float64)
+    image = tf.to_float(image)
+    
+    # Reshape image data into the original shape
+    image = tf.reshape(image, image_shape, name='reshape_image')
+    image = tf.to_float(image)
+
+    # Creates batches by randomly shuffling tensors    
+    images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=100000, allow_smaller_final_batch = True, num_threads=1, min_after_dequeue=number_batches)
+    
+    return images, number_batches        
+
+        
 # TODO: Kleines  Netz schreiben, das nichts weiter macht und gucken, warum zwei Bilder genommen werden
-def read_tfrecord(log_file, folder, image_shape, batch_size = 100, num_epochs = 100):
+def read_tfrecord_tmp(log_file, folder, image_shape, batch_size = 100, num_epochs = 100):
     feature = {'train/input': tf.FixedLenFeature([], tf.string)}
         
     info_filenames = glob.glob(os.path.join(folder, '*.info'))
