@@ -293,7 +293,7 @@ for i in range(fc_array.shape[0]):
     x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
     print("number_batches: ",number_batches)
 
-    current_fc_size_array = fc_array[i,0:fc_array[i]]
+    current_fc_size_array = fc_size_array[i,0:fc_array[i]]
     output, x, fc = create_network(x,fc_array[i],current_fc_size_array)
 
     # loss
