@@ -284,7 +284,7 @@ fc_size_array = np.array([[last_encoder_width,0,0],
                  [last_encoder_width,last_encoder_width/2,100]])
         
 for i in range(fc_array.shape[0]):
-    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(fc_array[i]) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
     
     # Reset graph
