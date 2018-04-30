@@ -13,20 +13,21 @@ import sequence_analysis as seq
 import json
 
 last_encoder_width = 500
-number_of_fc = 2
 number_of_conv = 3
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae/"
 dir_data = "../data/imgs/"
 dir_records = "../data/20180201/records/"
-path_model = "../data/20180201/models/conv_ae_velodyne_" + str(last_encoder_width) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
 
 # log file
 log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
+
+res_filename = "../data/results/ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+res_file = open(res_filename,"w")
 
 # input data parameters
 epochs = 20
@@ -68,36 +69,36 @@ def create_network(x, number_fc, fc_widths):
     print('conv3: ', conv3.get_shape())
     
     
-    fc1 = tflearn.fully_connected(conv3, last_encoder_width*2, activation = 'leaky_relu')
-    print('fc1: ', fc1.get_shape())
+    #fc1 = tflearn.fully_connected(conv3, last_encoder_width*2, activation = 'leaky_relu')
+    #print('fc1: ', fc1.get_shape())
     
-    fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
-    print('fc1: ', fc2.get_shape())
+    #fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
+    #print('fc1: ', fc2.get_shape())
     
-    tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
-    print('tfc1: ', tfc1.get_shape())
+    #tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
+    #print('tfc1: ', tfc1.get_shape())
     
-    tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
-    tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
-    print('tfc2: ', tfc2.get_shape())
+    #tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
+    #tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
+    #print('tfc2: ', tfc2.get_shape())
     
     
 
-    #fc = conv3
-    #for i in range(number_fc):
-        #fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
-        #print('fc: ', fc.get_shape())
+    fc = conv3
+    for i in range(number_fc):
+        fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
+        print('fc: ', fc.get_shape())
     
-    #encoder = fc
+    encoder = fc
     # start decoder
-    #tfc = fc
-   # for i in range(number_fc-1):
-        #tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
-        #print('tfc: ', tfc.get_shape())
+    tfc = fc
+    for i in range(number_fc-1):
+        tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
+        print('tfc: ', tfc.get_shape())
         
-    #tfc = tflearn.fully_connected(tfc, 225*4*n_features*2, activation = 'leaky_relu')
-    #tfc = tf.reshape(tfc, [-1, 225, 4, n_features*2])
-    #print('tfc: ', tfc.get_shape())
+    tfc = tflearn.fully_connected(tfc, 225*4*n_features*2, activation = 'leaky_relu')
+    tfc = tf.reshape(tfc, [-1, 225, 4, n_features*2])
+    print('tfc: ', tfc.get_shape())
     
     
     tconv2 = tflearn.conv_2d_transpose(tfc2,n_features*2,patch_size,maxPool2.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv2')
@@ -116,7 +117,7 @@ def create_network(x, number_fc, fc_widths):
     output = tconv4
     print('output:', output.get_shape())
 
-    return output, x, fc2
+    return output, x, encoder
 
 def train():
     print("start training...")
@@ -273,52 +274,64 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
     traj = traj[:,1:3]
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+
+fc_array = np.array([1,1,2,2,3,3])
+fc_size_array = np.array([[last_encoder_width,0,0],
+                 [last_encoder_width*2,0,0],
+                 [last_encoder_width*2,last_encoder_width,0],
+                 [last_encoder_width,last_encoder_width/2,0],
+                 [last_encoder_width*2,last_encoder_width,last_encoder_width/2],
+                 [last_encoder_width,last_encoder_width/2,100]])
         
-# Reset graph
-tf.reset_default_graph()
+for i in range(fc_array.shape[0]):
+    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
+    
+    # Reset graph
+    tf.reset_default_graph()
         
-x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
-print("number_batches: ",number_batches)
+    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
+    print("number_batches: ",number_batches)
+
+    current_fc_size_array = fc_array[i,0:fc_array[i]]
+    output, x, fc = create_network(x,fc_array[i],current_fc_size_array)
+
+    # loss
+    loss = tf.reduce_mean(tf.pow(x - output, 2))
+
+    # optimizer
+    optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
+
+    #train
+    train()
+
+    # export encoder
+    path_traj = '../data/traj/scan_traj_20180201.txt'
+    dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180201/scans/'
+    export_encoder(dir_data, dir_export_20180201, path_traj)
+
+    path_traj = '../data/traj/scan_traj_20180410_2.txt'
+    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180410/scans_rot_2/'
+    export_encoder(dir_data, dir_export_20180410_2, path_traj)
+
+    dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data_icsens = "../data/20180201/scans_icsens/"
+    path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
+    export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data_herrenhausen = "../data/20180206/scans/"
+    path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
+    export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
 
 
-output, x, fc = create_network(x,2,np.array([last_encoder_width*2,last_encoder_width]))
+    # get results
+    cluster_size = 200
+    sequence_length = 200
+    compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
+    current_string = "completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    log_file.write(current_string)
 
-# loss
-loss = tf.reduce_mean(tf.pow(x - output, 2))
-
-# optimizer
-optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
-
-#train
-train()
-
-# export encoder
-path_traj = '../data/traj/scan_traj_20180201.txt'
-dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-dir_data = '../data/20180201/scans/'
-export_encoder(dir_data, dir_export_20180201, path_traj)
-
-path_traj = '../data/traj/scan_traj_20180410_2.txt'
-dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-dir_data = '../data/20180410/scans_rot_2/'
-export_encoder(dir_data, dir_export_20180410_2, path_traj)
-
-dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-dir_data_icsens = "../data/20180201/scans_icsens/"
-path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
-export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
-
-dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-dir_data_herrenhausen = "../data/20180206/scans/"
-path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
-
-
-# get results
-cluster_size = 200
-sequence_length = 200
-compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
-current_string = "completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
-log_file.write(current_string)
-
-log_file.close()
+    log_file.close()
