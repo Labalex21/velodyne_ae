@@ -309,8 +309,8 @@ for i in range(fc_array.shape[0]):
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180201/scans/'
-    export_encoder(dir_data, dir_export_20180201, path_traj)
+    dir_data = '../data/20180201/scans_csv/'
+    export_encoder_csv(dir_data, dir_export_20180201, path_traj)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
