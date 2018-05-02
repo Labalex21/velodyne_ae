@@ -56,6 +56,30 @@ def filter_by_tree(tree, traj, features):
     features = features[(distances == 0)]
     return features, traj
 
+def interpolate_labels(traj, labels, label_dist = 0.3):
+    new_traj = []
+    new_labels = []
+    last_point = traj[0]
+    last_label = labels[0]
+    for i in range(1,traj.shape[0]):
+        point_dist = np.linalg.norm(traj[i]-last_point)
+        if point_dist < label_dist:
+            continue
+        number_points = int(point_dist/label_dist)
+        for j in range(number_points):
+            w1 = (1-(j+1)*(label_dist)/point_dist)
+            w2 = (j+1)*(label_dist)/point_dist
+            new_pos = w1*last_point + w2*traj[i]
+            new_traj.append(new_pos)
+
+            if w1 > w2:
+                new_labels.append(last_label)
+            else:
+                new_labels.append(labels[i])
+        last_point = new_pos
+        last_label = labels[i]
+    return np.array(new_traj), np.array(new_labels)
+
 def sample_data(data,traj,seg_dist=0.3):
     # f = 12.5 Hz --> every 0.08 s
     n = traj.shape[0]
@@ -99,8 +123,8 @@ def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
     features, trajectory_f = import_encoder_traj(path_online)
     
     print("sample data")
-    reference, trajectory_r = sample_data(reference,trajectory_r)
-    features, trajectory_f = sample_data(features,trajectory_f)
+    trajectory_r, reference  = interpolate_labels(trajectory_r,reference,0.3)
+    trajectory_f, features = interpolate_labels(trajectory_f,features,0.3)
     
     print("kmeans")
     kmeans = KMeans(n_clusters=cluster_size).fit(reference)    
