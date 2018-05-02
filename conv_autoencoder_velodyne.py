@@ -30,7 +30,7 @@ res_filename = "../data/results/ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 1
+epochs = 20
 batch_size = 100
 
 # images parameters
@@ -306,12 +306,7 @@ for i in range(fc_array.shape[0]):
     #train
     train()
 
-    # export encoder
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data_herrenhausen = "../data/20180206/scans/"
-    path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
-    
+    # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans/'
@@ -325,15 +320,21 @@ for i in range(fc_array.shape[0]):
     dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
-    export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+    #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+    
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data_herrenhausen = "../data/20180206/scans/"
+    path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
+    #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
 
    
-
+    #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
+    path_array_ref = [dir_export_20180201]
 
     # get results
     cluster_size = 200
     sequence_length = 200
-    compl, acc = seq.get_results(dir_export_herrenhausen, [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen],cluster_size,sequence_length)
+    compl, acc = seq.get_results(dir_export_herrenhausen, path_array_ref,cluster_size,sequence_length)
     current_string = "features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
     res_file.write(current_string)
