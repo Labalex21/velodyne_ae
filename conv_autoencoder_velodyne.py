@@ -230,7 +230,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
     
     # get all images
     #filenames = fh.files_in_folder(dir_data)
-    filenames = fh.files_in_folder_csv(dir_data_icsens)
+    filenames = fh.files_in_folder_csv(path_data)
     current_string = str(filenames.shape[0]) + " files\n"
     log_file.write(current_string)
     current_string = str(traj.shape[0]) + " scan positions\n"
