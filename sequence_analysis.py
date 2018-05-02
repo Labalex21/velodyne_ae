@@ -68,7 +68,7 @@ def sample_data(data,traj,seg_dist=0.3):
         dist_all += dist
         #dist_sum += dist
         if dist_all > seg_dist:
-            dist_all -= seg_dist
+            dist_all = 0
             traj_new.append(traj[i])
             data_new.append(data[i])
     data_new = np.array(data_new)
