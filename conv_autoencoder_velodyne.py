@@ -30,7 +30,7 @@ res_filename = "../data/results/ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 20
+epochs = 1
 batch_size = 100
 
 # images parameters
@@ -284,7 +284,8 @@ fc_size_array = np.array([[last_encoder_width,0,0],
                  [last_encoder_width,last_encoder_width/2,100]])
         
 for i in range(fc_array.shape[0]):
-    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(fc_array[i]) + "_" + str(number_of_conv) + ".ckpt"
+    number_of_fc = fc_array[i]
+    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
     
     # Reset graph
@@ -294,7 +295,7 @@ for i in range(fc_array.shape[0]):
     print("number_batches: ",number_batches)
 
     current_fc_size_array = fc_size_array[i,0:fc_array[i]]
-    output, x, fc = create_network(x,fc_array[i],current_fc_size_array)
+    output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
 
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
@@ -306,6 +307,11 @@ for i in range(fc_array.shape[0]):
     train()
 
     # export encoder
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data_herrenhausen = "../data/20180206/scans/"
+    path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
+    export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
+    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans/'
@@ -321,10 +327,7 @@ for i in range(fc_array.shape[0]):
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
     export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
 
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data_herrenhausen = "../data/20180206/scans/"
-    path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
+   
 
 
     # get results
