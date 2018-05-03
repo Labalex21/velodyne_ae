@@ -278,8 +278,14 @@ features_array = np.array([16,16,32,32,64,64,128,128])
 patches_array = np.array([1,1,3,3,5,5,10,10])
         
 for i in range(features_array.shape[0]):
+    
+    number_of_fc = 2
+    current_fc_size_array = [1000,500]
+    current_n_features = int(features_array[i])
+    current_patch_size = int(patches_array[i])
+    
     if i > 0:
-        number_of_fc = 2
+        
         path_model = "../data/20180201/models/conv_ae_velodyne_features_" + str(features_array[i]) + "_" + str(patches_array[i]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
         dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
 
@@ -289,9 +295,7 @@ for i in range(features_array.shape[0]):
         x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
         print("number_batches: ",number_batches)
 
-        current_fc_size_array = [1000,500]
-        current_n_features = int(features_array[i])
-        current_patch_size = int(patches_array[i])
+        
         output, x, fc = create_network(x,number_of_fc,current_fc_size_array,current_n_features, current_patch_size)
 
         # loss
