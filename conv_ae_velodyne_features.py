@@ -334,4 +334,3 @@ for i in range(features_array.shape[0]):
     current_string = "features: " + str(current_n_features) + " patch size" + str(current_patches) + " " + str(1000) + " " + str(500) + " " + str(0) + " " + str(2) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
     res_file.write(current_string)
- log_file.close()
