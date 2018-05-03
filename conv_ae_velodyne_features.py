@@ -43,11 +43,10 @@ label_shape = image_shape
 # network parameters
 learning_rate = 0.002
 
-n_features = 32
-patch_size = 3
+
 strides = [1, 1, 1, 1]
 
-def create_network(x, number_fc, fc_widths):
+def create_network(x, number_fc, fc_widths, n_features, patch_size):
     print('input: ',x.get_shape())
     x = tf.reshape(x, [tf.shape(x)[0], height, width, 1], name='reshape_image1')
     print(x)
@@ -275,17 +274,12 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,2,2,3,3])
-fc_size_array = np.array([[last_encoder_width,0,0],
-                 [last_encoder_width*2,0,0],
-                 [last_encoder_width*2,last_encoder_width,0],
-                 [last_encoder_width,last_encoder_width/2,0],
-                 [last_encoder_width*2,last_encoder_width,last_encoder_width/2],
-                 [last_encoder_width,last_encoder_width/2,100]])
+features_array = np.array([16,16,32,32,64,64,128,128])
+patches_array = np.array([1,1,3,3,5,5,10,10])
         
-for i in range(fc_array.shape[0]):
-    number_of_fc = fc_array[i]
-    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+for i in range(features_array.shape[0]):
+    number_of_fc = 2
+    path_model = "../data/20180201/models/conv_ae_velodyne_features_" + str(features_array[i]) + "_" + str(patches_array[i]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
     
     # Reset graph
@@ -294,8 +288,10 @@ for i in range(fc_array.shape[0]):
     x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
     print("number_batches: ",number_batches)
 
-    current_fc_size_array = fc_size_array[i,0:fc_array[i]]
-    output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
+    current_fc_size_array = [1000,500]
+    current_n_features = features_array[i]
+    current_patch_size = patches_array[i]
+    output, x, fc = create_network(x,number_of_fc,current_fc_size_array,current_n_features, current_patch_size)
 
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
@@ -335,7 +331,7 @@ for i in range(fc_array.shape[0]):
     cluster_size = 200
     sequence_length = 200
     compl, acc = seq.get_results(dir_export_20180201, path_array_ref,cluster_size,sequence_length)
-    current_string = "features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    current_string = "features: " + str(current_n_features) + " patch size" + str(current_patches) + " " + str(1000) + " " + str(500) + " " + str(0) + " " + str(2) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
     res_file.write(current_string)
  log_file.close()
