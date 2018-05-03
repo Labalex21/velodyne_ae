@@ -289,8 +289,8 @@ for i in range(features_array.shape[0]):
     print("number_batches: ",number_batches)
 
     current_fc_size_array = [1000,500]
-    current_n_features = features_array[i]
-    current_patch_size = patches_array[i]
+    current_n_features = int(features_array[i])
+    current_patch_size = int(patches_array[i])
     output, x, fc = create_network(x,number_of_fc,current_fc_size_array,current_n_features, current_patch_size)
 
     # loss
