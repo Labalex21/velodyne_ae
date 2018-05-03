@@ -18,15 +18,15 @@ fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae/"
 dir_data = "../data/imgs/"
-dir_records = "../data/20180201/records/"
+dir_records = "../data/20180201/records_int/"
 
 # log file
-log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+log_filename = "../data/logs/log_ae_int_dist_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
 
-res_filename = "../data/results/ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+res_filename = "../data/results/ae_int_dist_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 res_file = open(res_filename,"w")
 
 # input data parameters
@@ -49,7 +49,7 @@ strides = [1, 1, 1, 1]
 
 def create_network(x, number_fc, fc_widths):
     print('input: ',x.get_shape())
-    x = tf.reshape(x, [tf.shape(x)[0], height, width, 1], name='reshape_image1')
+    x = tf.reshape(x, [tf.shape(x)[0], height, width, 2], name='reshape_image1')
     print(x)
     x = tf.to_float(x)/max_dist
     print(x)
@@ -82,8 +82,6 @@ def create_network(x, number_fc, fc_widths):
     #tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
     #print('tfc2: ', tfc2.get_shape())
     
-    
-
     fc = conv3
     for i in range(number_fc):
         fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
@@ -111,7 +109,7 @@ def create_network(x, number_fc, fc_widths):
     
     upsample4 = tflearn.upsample_2d(tconv3,2)
     print('usamp4:', upsample4.get_shape())
-    tconv4 = tflearn.conv_2d_transpose(upsample4,1,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
+    tconv4 = tflearn.conv_2d_transpose(upsample4,2,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
     print('tconv4:', tconv4.get_shape())
 
     output = tconv4
@@ -285,7 +283,7 @@ fc_size_array = np.array([[last_encoder_width,0,0],
         
 for i in range(fc_array.shape[0]):
     number_of_fc = fc_array[i]
-    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    path_model = "../data/20180201/models/conv_ae_velodyne_int_dist_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
     
     # Reset graph
