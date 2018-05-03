@@ -278,40 +278,43 @@ features_array = np.array([16,16,32,32,64,64,128,128])
 patches_array = np.array([1,1,3,3,5,5,10,10])
         
 for i in range(features_array.shape[0]):
-    number_of_fc = 2
-    path_model = "../data/20180201/models/conv_ae_velodyne_features_" + str(features_array[i]) + "_" + str(patches_array[i]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
-    dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
-    
-    # Reset graph
-    tf.reset_default_graph()
-        
-    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
-    print("number_batches: ",number_batches)
+    if i > 0:
+        number_of_fc = 2
+        path_model = "../data/20180201/models/conv_ae_velodyne_features_" + str(features_array[i]) + "_" + str(patches_array[i]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+        dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
 
-    current_fc_size_array = [1000,500]
-    current_n_features = int(features_array[i])
-    current_patch_size = int(patches_array[i])
-    output, x, fc = create_network(x,number_of_fc,current_fc_size_array,current_n_features, current_patch_size)
+        # Reset graph
+        tf.reset_default_graph()
 
-    # loss
-    loss = tf.reduce_mean(tf.pow(x - output, 2))
+        x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
+        print("number_batches: ",number_batches)
 
-    # optimizer
-    optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
+        current_fc_size_array = [1000,500]
+        current_n_features = int(features_array[i])
+        current_patch_size = int(patches_array[i])
+        output, x, fc = create_network(x,number_of_fc,current_fc_size_array,current_n_features, current_patch_size)
 
-    #train
-    train()
+        # loss
+        loss = tf.reduce_mean(tf.pow(x - output, 2))
+
+        # optimizer
+        optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
+
+        #train
+        train()
 
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans_csv/'
-    export_encoder_csv(dir_data, dir_export_20180201, path_traj)
+    if i > 0:
+        export_encoder_csv(dir_data, dir_export_20180201, path_traj)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_rot_2/'
-    export_encoder(dir_data, dir_export_20180410_2, path_traj)
+    if i > 0:
+        export_encoder(dir_data, dir_export_20180410_2, path_traj)
 
     dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
@@ -331,6 +334,6 @@ for i in range(features_array.shape[0]):
     cluster_size = 200
     sequence_length = 200
     compl, acc = seq.get_results(dir_export_20180201, path_array_ref,cluster_size,sequence_length)
-    current_string = "features: " + str(current_n_features) + " patch size" + str(current_patches) + " " + str(1000) + " " + str(500) + " " + str(0) + " " + str(2) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    current_string = "features: " + str(current_n_features) + " patch size" + str(current_patch_size) + " " + str(1000) + " " + str(500) + " " + str(0) + " " + str(2) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
     res_file.write(current_string)
