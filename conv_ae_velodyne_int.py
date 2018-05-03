@@ -107,7 +107,7 @@ def create_network(x, number_fc, fc_widths):
     
     upsample4 = tflearn.upsample_2d(tconv3,2)
     print('usamp4:', upsample4.get_shape())
-    tconv4 = tflearn.conv_2d_transpose(upsample4,2,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
+    tconv4 = tflearn.conv_2d_transpose(upsample4,1,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
     print('tconv4:', tconv4.get_shape())
 
     output = tconv4
