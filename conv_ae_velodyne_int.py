@@ -37,7 +37,7 @@ batch_size = 100
 max_dist = 40
 height = 900
 width = 16
-image_shape = [height,width]
+image_shape = [height,width,2]
 label_shape = image_shape
 
 # network parameters
