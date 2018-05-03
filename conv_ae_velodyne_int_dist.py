@@ -37,7 +37,7 @@ batch_size = 100
 max_dist = 40
 height = 900
 width = 16
-image_shape = [height,width]
+image_shape = [height,width,2]
 label_shape = image_shape
 
 # network parameters
@@ -152,11 +152,11 @@ def train():
                           "| El. time: ", "{:.2f}".format(elapsed), "s",
                           "| Batch time: ", "{:.2f}".format(elapsed2), "s")
                     
-            for i in range(imgs.shape[0]):
-                filename_input = dir_test +  str(i) + "_input.png"
-                filename_output = dir_test +  str(i)  + "_output.png"
-                cv2.imwrite(filename_input, imgs[i]*255)
-                cv2.imwrite(filename_output, preds[i]*255)
+            #for i in range(imgs.shape[0]):
+                #filename_input = dir_test +  str(i) + "_input.png"
+                #filename_output = dir_test +  str(i)  + "_output.png"
+                #cv2.imwrite(filename_input, imgs[i]*255)
+                #cv2.imwrite(filename_output, preds[i]*255)
             
                     
          
@@ -197,9 +197,8 @@ def export_encoder(path_data, path_export, path_current_traj):
     
             imgs = []
             for j in range(start_idx,end_idx):
-                _,img = fh.get_velodyne_img(filenames[j])
-                img = img[:,:,0]
-                img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                img_dist,img_int = fh.get_velodyne_img(filenames[j])
+                img = np.concatenate((img_dist,img_int))
                 imgs.append(img)
             imgs = np.array(imgs)
             current_string = str(j) + " " + str(filenames[j]) + "\n"
@@ -256,9 +255,8 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             imgs = []
             for j in range(start_idx,end_idx):
                 idx = int(traj[j,0])
-                _,img = fh.get_velodyne_img_csv(filenames[idx])
-                img = img[:,:,0]
-                img = np.reshape(img,[img.shape[0],img.shape[1],1])
+                img_dist,img_int = fh.get_velodyne_img_csv(filenames[j])
+                img = np.concatenate((img_dist,img_int))
                 imgs.append(img)
             imgs = np.array(imgs)
             current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
