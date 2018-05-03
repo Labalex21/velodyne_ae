@@ -68,39 +68,36 @@ def create_network(x, number_fc, fc_widths):
     conv3 = tflearn.conv_2d(maxPool2,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv3')
     print('conv3: ', conv3.get_shape())
     
-    
-    #fc1 = tflearn.fully_connected(conv3, last_encoder_width*2, activation = 'leaky_relu')
-    #print('fc1: ', fc1.get_shape())
-    
-    #fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
-    #print('fc1: ', fc2.get_shape())
-    
-    #tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
-    #print('tfc1: ', tfc1.get_shape())
-    
-    #tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
-    #tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
-    #print('tfc2: ', tfc2.get_shape())
-    
-    
+    conv4 = tflearn.conv_2d(conv3,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv3')
+    print('conv4: ', conv4.get_shape())
 
-    fc = conv3
+#    maxPool3 = tflearn.layers.conv.max_pool_2d (conv3, 2, padding='same')
+#    print('mPool3:', maxPool3.get_shape())
+    
+#    conv4 = tflearn.conv_2d(maxPool3,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu')
+#    print('conv4: ', conv4.get_shape())
+#    maxPool4 = tflearn.layers.conv.max_pool_2d (conv4, 2, padding='same')
+#    print('mpool4:', conv4.get_shape())
+#    
+#
+    fc = conv4
     for i in range(number_fc):
         fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
         print('fc: ', fc.get_shape())
-    
-    encoder = fc
-    # start decoder
+       
     tfc = fc
     for i in range(number_fc-1):
         tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
         print('tfc: ', tfc.get_shape())
         
-    tfc = tflearn.fully_connected(tfc, 225*4*n_features*2, activation = 'leaky_relu')
-    tfc = tf.reshape(tfc, [-1, 225, 4, n_features*2])
+    tfc = tflearn.fully_connected(tfc, 225*4*n_features*4, activation = 'leaky_relu')
+    tfc = tf.reshape(tfc, [-1, 225, 4, n_features*4])
     print('tfc: ', tfc.get_shape())
     
+    #tconv1 = tflearn.conv_2d_transpose(tfc,n_features*4,patch_size,maxPool2.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv1')
+    #print('tconv1:', tconv1.get_shape())
     
+
     tconv2 = tflearn.conv_2d_transpose(tfc,n_features*2,patch_size,maxPool2.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv2')
     print('tconv2:', tconv2.get_shape())
     
@@ -117,7 +114,7 @@ def create_network(x, number_fc, fc_widths):
     output = tconv4
     print('output:', output.get_shape())
 
-    return output, x, encoder
+    return output, x, fc
 
 def train():
     print("start training...")
