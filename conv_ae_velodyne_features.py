@@ -340,4 +340,6 @@ for i in range(features_array.shape[0]):
     compl, acc = seq.get_results(dir_export_20180201, path_array_ref,cluster_size,sequence_length)
     current_string = "features: " + str(current_n_features) + " patch size" + str(current_patch_size) + " " + str(1000) + " " + str(500) + " " + str(0) + " " + str(2) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
+    log_file.flush()
     res_file.write(current_string)
+    res_file.flush()
