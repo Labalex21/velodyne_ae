@@ -198,7 +198,9 @@ def export_encoder(path_data, path_export, path_current_traj):
             imgs = []
             for j in range(start_idx,end_idx):
                 img_dist,img_int = fh.get_velodyne_img(filenames[j])
-                img = np.concatenate((img_dist,img_int))
+                img_dist = np.reshape(img_dist, [img_dist.shape[0], img_dist.shape[1], 1])
+                img_int = np.reshape(img_int, [img_int.shape[0], img_int.shape[1], 1])
+                img = np.concatenate((img_dist,img_int),axis=2)
                 imgs.append(img)
             imgs = np.array(imgs)
             current_string = str(j) + " " + str(filenames[j]) + "\n"
@@ -256,7 +258,9 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
             for j in range(start_idx,end_idx):
                 idx = int(traj[j,0])
                 img_dist,img_int = fh.get_velodyne_img_csv(filenames[j])
-                img = np.concatenate((img_dist,img_int))
+                img_dist = np.reshape(img_dist, [img_dist.shape[0], img_dist.shape[1], 1])
+                img_int = np.reshape(img_int, [img_int.shape[0], img_int.shape[1], 1])
+                img = np.concatenate((img_dist,img_int),axis=2)
                 imgs.append(img)
             imgs = np.array(imgs)
             current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
