@@ -21,12 +21,12 @@ dir_data = "../data/imgs/"
 dir_records = "../data/20180201/records/"
 
 # log file
-log_filename = "../data/logs/log_ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+log_filename = "../data/logs/log_ae_feat_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
 
-res_filename = "../data/results/ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+res_filename = "../data/results/ae_feat_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 res_file = open(res_filename,"w")
 
 # input data parameters
