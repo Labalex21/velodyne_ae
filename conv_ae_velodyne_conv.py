@@ -235,7 +235,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     number_of_scans = traj.shape[0]
     
     # save feature values here
-    encoder_values = np.zeros((number_of_scans, last_encoder_width))
+    encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
     if number_of_scans % 100 == 0:
         k = 0
