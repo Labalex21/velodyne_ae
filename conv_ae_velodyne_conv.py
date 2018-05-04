@@ -166,7 +166,7 @@ def train():
         save_path = saver.save(sess, path_model)
         print("Model saved in file: %s" % save_path)
 
-def export_encoder(path_data, path_export, path_current_traj):
+def export_encoder(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
     traj = fh.get_scan_trajectory(path_current_traj)
     
@@ -221,7 +221,7 @@ def export_encoder(path_data, path_export, path_current_traj):
                 #cv2.imwrite(string_img, imgs[j]*255)
                 #cv2.imwrite(string_pred, pred[j]*255)
                 
-def export_encoder_csv(path_data, path_export, path_current_traj):
+def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
     traj = fh.get_scan_trajectory_csv(path_current_traj)
     
@@ -280,53 +280,51 @@ fc_size_array = np.array([[last_encoder_width,0,0],
                  [last_encoder_width*2,last_encoder_width,last_encoder_width/2],
                  [last_encoder_width,last_encoder_width/2,100]])
         
-for i in range(fc_array.shape[0]):
+for i in range(1,fc_array.shape[0]):
     number_of_fc = fc_array[i]
     path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
     current_fc_size_array = fc_size_array[i,0:fc_array[i]]
+    last_encoder_width = fc_size_array[number_of_fc-1]
     
-    if i > 0:
-        # Reset graph
-        tf.reset_default_graph()
+    # Reset graph
+    tf.reset_default_graph()
 
-        x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
-        print("number_batches: ",number_batches)
+    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
+    print("number_batches: ",number_batches)
 
 
-        output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
+    output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
 
-        # loss
-        loss = tf.reduce_mean(tf.pow(x - output, 2))
+    # loss
+    loss = tf.reduce_mean(tf.pow(x - output, 2))
 
-        # optimizer
-        optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
+    # optimizer
+    optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
-        #train
-        train()
+    #train
+    train()
 
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_conv_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180201/scans_csv/'
-    if i > 0:
-        export_encoder_csv(dir_data, dir_export_20180201, path_traj)
+    dir_data = '../data/20180201/scans_csv/'  
+    export_encoder_csv(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_conv_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_rot_2/'
-    if i > 0:
-        export_encoder(dir_data, dir_export_20180410_2, path_traj)
+    export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_conv_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
-    #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens)
+    #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
     dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_conv_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen)
+    #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
 
    
     #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
