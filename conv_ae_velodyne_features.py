@@ -277,21 +277,26 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
 features_array = np.array([16,16,32,32,64,64,128,128])
 patches_array = np.array([  3, 5, 1, 5, 10,1,5])
         
-for i in range(features_array.shape[0]):
-    
+for i in range(2,features_array.shape[0]):
+    current_string = "i: " + str(i) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     number_of_fc = 2
     current_fc_size_array = [1000,500]
     current_n_features = int(features_array[i])
     current_patch_size = int(patches_array[i])
-    
-    if i == 0:
-        continue
         
     path_model = "../data/20180201/models/conv_ae_velodyne_features_" + str(features_array[i]) + "_" + str(patches_array[i]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
 
     # Reset graph
+    current_string = "reset graph..."
+    log_file.write(current_string)
+    log_file.flush()
     tf.reset_default_graph()
+    current_string = "Done.\n"
+    log_file.write(current_string)
+    log_file.flush()
 
     x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
     print("number_batches: ",number_batches)
