@@ -236,7 +236,8 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     current_string = str(traj.shape[0]) + " scan positions\n"
     log_file.write(current_string)
     number_of_scans = traj.shape[0]
-    
+    log_file.write(str(number_of_scans)+"\n"+str(last_encoder_width))
+
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
@@ -305,7 +306,7 @@ for i in range(3,fc_array.shape[0]):
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
     #train
-    train()
+    #train()
 
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
