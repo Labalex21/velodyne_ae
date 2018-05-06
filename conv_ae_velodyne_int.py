@@ -49,7 +49,7 @@ strides = [1, 1, 1, 1]
 
 def create_network(x, number_fc, fc_widths):
     print('input: ',x.get_shape())
-    x = tf.reshape(x[:,:,:,0], [tf.shape(x)[0], height, width, 1], name='reshape_image1')
+    x = tf.reshape(x[:,:,:,1], [tf.shape(x)[0], height, width, 1], name='reshape_image1')
     x = tf.to_float(x)/max_dist
     print('x:     ',x.get_shape())
     
