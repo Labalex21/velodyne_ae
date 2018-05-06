@@ -292,7 +292,7 @@ for i in range(fc_array.shape[0]):
     # Reset graph
     tf.reset_default_graph()
         
-    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
+    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=100)
     print("number_batches: ",number_batches)
 
     current_fc_size_array = fc_size_array[i,0:fc_array[i]]
