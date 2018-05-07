@@ -186,8 +186,8 @@ def get_velodyne_img(filename):
 
 def get_velodyne_img_csv(filename):
     res_az = 0.4*100 # 0.4 deg times 100
-    img_dist = np.zeros([900,16,3])
-    img_int = np.zeros([900,16,3])
+    img_dist = np.zeros([900,16])
+    img_int = np.zeros([900,16])
     with open(filename, 'r') as f:
         next(f)
         for line in f:
@@ -196,8 +196,8 @@ def get_velodyne_img_csv(filename):
                 continue
             row = np.mod(900-int(values[8]/res_az)+225,900)
             col = 15-int((values[12]+15)/2)
-            img_dist[row,col,0:3] = values[9] # distance
-            img_int[row,col,0:3] = values[6] # intensity
+            img_dist[row,col] = values[9] # distance
+            img_int[row,col] = values[6] # intensity
     return img_dist, img_int
 
 def files_in_folder_csv(directory):
