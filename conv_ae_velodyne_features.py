@@ -275,14 +275,14 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
 features_array = np.array([16,16,32,32,64,64,128,128])
-patches_array = np.array([  3, 5, 1, 5, 10,1,5])
+patches_array = np.array([  3, 5, 1, 5, 3,5,3,5])
         
 for i in range(4,features_array.shape[0]):
     current_string = "i: " + str(i) + "\n"
     log_file.write(current_string)
     log_file.flush()
-    number_of_fc = 2
-    current_fc_size_array = [1000,500]
+    number_of_fc = 1
+    current_fc_size_array = [500]
     current_n_features = int(features_array[i])
     current_patch_size = int(patches_array[i])
         
