@@ -277,7 +277,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj):
 features_array = np.array([16,16,32,32,64,64,128,128])
 patches_array = np.array([  3, 5, 1, 5, 3,5,3,5])
         
-for i in range(5,features_array.shape[0]):
+for i in range(6,features_array.shape[0]):
     current_string = "i: " + str(i) + "\n"
     log_file.write(current_string)
     log_file.flush()
