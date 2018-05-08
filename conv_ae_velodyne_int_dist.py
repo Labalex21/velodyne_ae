@@ -283,7 +283,7 @@ fc_size_array = np.array([[last_encoder_width,0,0],
                  [last_encoder_width*2,last_encoder_width,last_encoder_width/2],
                  [last_encoder_width,last_encoder_width/2,100]])
         
-for i in range(fc_array.shape[0]):
+for i in range(1,fc_array.shape[0]):
     number_of_fc = fc_array[i]
     path_model = "../data/20180201/models/conv_ae_velodyne_int_dist_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
@@ -305,13 +305,13 @@ for i in range(fc_array.shape[0]):
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
     #train
-    #train()
+    train()
 
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_int_dist_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans_csv/'
-    #export_encoder_csv(dir_data, dir_export_20180201, path_traj,last_encoder_width)
+    export_encoder_csv(dir_data, dir_export_20180201, path_traj,last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_int_dist_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
