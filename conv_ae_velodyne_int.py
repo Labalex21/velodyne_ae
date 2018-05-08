@@ -266,6 +266,15 @@ def export_encoder_csv(path_data, path_export, path_current_traj,last_encoder_wi
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
+            pred = np.array(pred)
+            pred = np.reshape(pred, [pred.shape[0], pred.shape[1], pred.shape[2]])
+
+            for j in range(imgs.shape[0]):
+                string_img = "G:/schlichting/data/20180201/imgs/pred_ae/" + "img_" + str(j+start_idx) + "_orig.png"
+                string_pred = "G:/schlichting/data/20180201/imgs/pred_ae/" + "img_" + str(j+start_idx) + "_pred.png"
+                cv2.imwrite(string_img, imgs[j]*255)
+                cv2.imwrite(string_pred, pred[j]*255)
+            
     # export values to json file
     traj = traj[:,1:3]
     with open(path_export, 'w') as f:
