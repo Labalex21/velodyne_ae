@@ -57,15 +57,15 @@ def create_network(x, number_fc, fc_widths):
     
     conv1 = tflearn.conv_2d(x,n_features,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv1')
     print('conv1: ', conv1.get_shape())
-    maxPool1 = tflearn.layers.conv.max_pool_2d (conv1, 2, padding='same')
-    print('mPool1:', maxPool1.get_shape())
+    #maxPool1 = tflearn.layers.conv.max_pool_2d (conv1, 2, padding='same')
+    #print('mPool1:', maxPool1.get_shape())
     
-    conv2 = tflearn.conv_2d(maxPool1,n_features*2,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv2')
+    conv2 = tflearn.conv_2d(conv1,n_features*2,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv2')
     print('conv2: ', conv2.get_shape())
-    maxPool2 = tflearn.layers.conv.max_pool_2d (conv2, 2, padding='same')
-    print('mPool2:', maxPool2.get_shape())
+    #maxPool2 = tflearn.layers.conv.max_pool_2d (conv2, 2, padding='same')
+    #print('mPool2:', maxPool2.get_shape())
     
-    conv3 = tflearn.conv_2d(maxPool2,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv3')
+    conv3 = tflearn.conv_2d(conv2,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv3')
     print('conv3: ', conv3.get_shape())
     
     
@@ -96,22 +96,22 @@ def create_network(x, number_fc, fc_widths):
         tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
         print('tfc: ', tfc.get_shape())
         
-    tfc = tflearn.fully_connected(tfc, 225*4*n_features*2, activation = 'leaky_relu')
-    tfc = tf.reshape(tfc, [-1, 225, 4, n_features*2])
+    tfc = tflearn.fully_connected(tfc, 900*16*n_features*2, activation = 'leaky_relu')
+    tfc = tf.reshape(tfc, [-1, 900, 16, n_features*2])
     print('tfc: ', tfc.get_shape())
     
     
     tconv2 = tflearn.conv_2d_transpose(tfc,n_features*2,patch_size,maxPool2.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv2')
     print('tconv2:', tconv2.get_shape())
     
-    upsample3 = tflearn.upsample_2d(tconv2,2)
-    print('usamp3:', upsample3.get_shape())
-    tconv3 = tflearn.conv_2d_transpose(upsample3,n_features*1,patch_size,maxPool1.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv3')
+    #upsample3 = tflearn.upsample_2d(tconv2,2)
+    #print('usamp3:', upsample3.get_shape())
+    tconv3 = tflearn.conv_2d_transpose(tconv2,n_features*1,patch_size,maxPool1.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv3')
     print('tconv3:', tconv3.get_shape())
     
-    upsample4 = tflearn.upsample_2d(tconv3,2)
-    print('usamp4:', upsample4.get_shape())
-    tconv4 = tflearn.conv_2d_transpose(upsample4,1,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
+    #upsample4 = tflearn.upsample_2d(tconv3,2)
+    #print('usamp4:', upsample4.get_shape())
+    tconv4 = tflearn.conv_2d_transpose(tconv3,1,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
     print('tconv4:', tconv4.get_shape())
 
     output = tconv4
@@ -286,8 +286,8 @@ fc_size_array = np.array([[last_encoder_width,0,0],
         
 for i in range(1,fc_array.shape[0]):
     number_of_fc = fc_array[i]
-    path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
-    dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
+    path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     last_encoder_width = fc_size_array[i,number_of_fc-1]
     
     # Reset graph
@@ -310,21 +310,21 @@ for i in range(1,fc_array.shape[0]):
 
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
-    dir_export_20180201 = '../data/features/velodyne_20180201_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans_csv/'
     export_encoder_csv(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
-    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_rot_2/'
     export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
-    dir_export_icsens = '../data/features/velodyne_icsens_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
     #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
     #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
@@ -341,7 +341,7 @@ for i in range(1,fc_array.shape[0]):
     compl, acc = seq.get_results(dir_export_20180201, path_array_ref,cluster_size,sequence_length)
     log_file.write("Done.\n")
     log_file.flush()
-    current_string = "features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + "_" + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
     log_file.write(current_string)
     log_file.flush()
     res_file.write(current_string)
