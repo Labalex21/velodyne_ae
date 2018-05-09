@@ -305,7 +305,7 @@ for i in range(1,fc_array.shape[0]):
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
     #train
-    train()
+    #train()
 
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
