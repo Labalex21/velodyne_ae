@@ -30,7 +30,7 @@ res_filename = "../data/results/ae_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 20
+epochs = 200
 batch_size = 100
 
 # images parameters
@@ -43,7 +43,7 @@ label_shape = image_shape
 # network parameters
 learning_rate = 0.002
 
-n_features = 32
+n_features = 64
 patch_size = 3
 strides = [1, 1, 1, 1]
 
@@ -284,7 +284,7 @@ fc_size_array = np.array([[last_encoder_width,0,0],
                  [last_encoder_width*2,last_encoder_width,last_encoder_width/2],
                  [last_encoder_width,last_encoder_width/2,100]])
         
-for i in range(4,fc_array.shape[0]):
+for i in range(1,fc_array.shape[0]):
     number_of_fc = fc_array[i]
     path_model = "../data/20180201/models/conv_ae_velodyne_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc/" + str(i) + "/"
@@ -334,7 +334,7 @@ for i in range(4,fc_array.shape[0]):
     path_array_ref = [dir_export_20180201]
 
     # get results
-    cluster_size = 200
+    cluster_size = 100
     sequence_length = 200
     log_file.write("sequence analysis...\n")
     log_file.flush()
