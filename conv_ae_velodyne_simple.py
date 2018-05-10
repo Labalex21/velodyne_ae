@@ -11,6 +11,7 @@ import numpy as np
 import datetime as dt
 import sequence_analysis as seq
 import json
+from activations import lrelu # leaky rectified linear activation function
 
 last_encoder_width = 500
 number_of_conv = 3
