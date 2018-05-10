@@ -91,7 +91,7 @@ def conv_transposed(x_input, W, output_shape, name,strides):
     return output
 
 def create_network(x, number_fc, fc_widths):
-    current_string = "create network + str(fc_widths[0]) + " " + str(fc_widths[1]) + " " + str(fc_widths[2]) + " \n"
+    current_string = "create network " + str(fc_widths[0]) + " " + str(fc_widths[1]) + " " + str(fc_widths[2]) + " \n"
     log_file.write(current_string)
     log_file.flush()
     
