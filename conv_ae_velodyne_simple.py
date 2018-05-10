@@ -228,11 +228,18 @@ def train():
             log_file.flush()
             for i in range(total_batch):
                 start2 = time.time()
+                current_string = "train\n"
+                log_file.write(current_string)
+                log_file.flush()
                 _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
-                if i % 1 == 0:
+                
+                current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
+                if i % 20 == 0:
                     current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
                     log_file.write(current_string)
                     log_file.flush()
