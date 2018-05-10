@@ -90,6 +90,13 @@ def conv_transposed(x_input, W, output_shape, name,strides):
     output = lrelu(output)
     return output
 
+def fully_connected(x_input, W, b):
+        output = tf.matmul(x_input, W)
+        output = tf.add(output, b)
+        # output = tflearn.batch_normalization(output)
+        output = tf.nn.relu(output)
+        return output
+
 def create_network(x_input, number_fc, fc_widths):
     current_string = "create network " + str(fc_widths[0]) + " " + str(fc_widths[1]) + " " + str(fc_widths[2]) + " \n"
     log_file.write(current_string)
