@@ -200,7 +200,7 @@ def train():
         current_string = "init global" + "\n"
         log_file.write(current_string)
         log_file.flush()
-        #sess.run(tf.global_variables_initializer())
+        sess.run(tf.global_variables_initializer())
         current_string = "init local" + "\n"
         log_file.write(current_string)
         log_file.flush()
