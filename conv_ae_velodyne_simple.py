@@ -47,75 +47,133 @@ n_features = 64
 patch_size = 3
 strides = [1, 1, 1, 1]
 
+def xavier_init(fan_in, fan_out, constant=1):
+    """ Xavier initialization of network weights"""
+    # https://stackoverflow.com/questions/33640581/how-to-do-xavier-initialization-on-tensorflow
+    low = -constant * np.sqrt(6.0 / (fan_in + fan_out))
+    high = constant * np.sqrt(6.0 / (fan_in + fan_out))
+    return tf.random_uniform((fan_in, fan_out),
+                             minval=low, maxval=high,
+                             dtype=tf.float32)
+
+# define weights, uniform dis
+def weight_variable(n_input, n_output, patch, name):
+    W = tf.Variable(
+        tf.random_uniform([patch, 1, n_input, n_output],
+                          -1.0 / math.sqrt(n_input),
+                          1.0 / math.sqrt(n_input)),
+        name=name)
+    return W
+
+# convolutional layer
+def conv(x_input, W, b,strides):
+    #data input NHWC
+
+    conv = tf.nn.conv2d(x_input, W, strides, padding='SAME') # "2d" convolution (here reduced to 1d)
+    conv = tf.nn.bias_add(conv, b) # bias
+    # conv = tflearn.batch_normalization(conv) # batch normalization
+    conv = lrelu(conv) # leaky rectified linear activation function
+    return conv
+
+# transposed convolution for the decoder
+def conv_transposed(x_input, W, output_shape, name,strides):
+
+    b = tf.Variable(tf.zeros([W.get_shape().as_list()[2]]))
+    output = tf.nn.conv2d_transpose(x_input, W,
+                                    tf.stack([tf.shape(x)[0], output_shape[1], output_shape[2], output_shape[3]]),
+                                    # output_shape[1:4],
+                                    strides, padding='SAME', name=name)
+    output = tf.nn.bias_add(output, b)
+    # output = tflearn.batch_normalization(output)
+    output = lrelu(output)
+    return output
+
 def create_network(x, number_fc, fc_widths):
-    print('input: ',x.get_shape())
-    x = tf.reshape(x, [tf.shape(x)[0], height, width, 1], name='reshape_image1')
-    print(x)
-    x = tf.to_float(x)/max_dist
-    print(x)
-    print('x:     ',x.get_shape())
     
-    conv1 = tflearn.conv_2d(x,n_features,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv1')
-    print('conv1: ', conv1.get_shape())
-    #maxPool1 = tflearn.layers.conv.max_pool_2d (conv1, 2, padding='same')
-    #print('mPool1:', maxPool1.get_shape())
-    
-    conv2 = tflearn.conv_2d(conv1,n_features*2,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv2')
-    print('conv2: ', conv2.get_shape())
-    #maxPool2 = tflearn.layers.conv.max_pool_2d (conv2, 2, padding='same')
-    #print('mPool2:', maxPool2.get_shape())
-    
-    conv3 = tflearn.conv_2d(conv2,n_features*4,patch_size,strides, padding = 'same', activation = 'leaky_relu', name='conv3')
-    print('conv3: ', conv3.get_shape())
-    
-    
-    #fc1 = tflearn.fully_connected(conv3, last_encoder_width*2, activation = 'leaky_relu')
-    #print('fc1: ', fc1.get_shape())
-    
-    #fc2 = tflearn.fully_connected(fc1, last_encoder_width, activation = 'leaky_relu')
-    #print('fc1: ', fc2.get_shape())
-    
-    #tfc1 = tflearn.fully_connected(fc2, last_encoder_width*2, activation = 'leaky_relu')
-    #print('tfc1: ', tfc1.get_shape())
-    
-    #tfc2 = tflearn.fully_connected(tfc1, 225*4*n_features*2, activation = 'leaky_relu')
-    #tfc2 = tf.reshape(tfc2, [-1, 225, 4, n_features*2])
-    #print('tfc2: ', tfc2.get_shape())
-    
-    
+    weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
+               'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
+               'wconv3': weight_variable(n_features, n_features, patch_size, name='w_conv1_w3'),
+               'wconv4': weight_variable(n_features, n_features, patch_size, name='w_conv1_w4'),
+               'wfc1': tf.Variable(xavier_init(16 * 900 * n_features, n_hidden_1), name='w_fc1'),
+               # 'wfc1': tf.Variable(xavier_init(2 * 113 * n_features, n_hidden_1), name='w_fc1'),
+               # 'wfc2': tf.Variable(xavier_init(n_hidden_1, n_hidden_2), name='w_fc2'),
+               # 'wfc3': tf.Variable(xavier_init(n_hidden_2, n_hidden_3), name='w_fc3')
+               }
 
-    fc = conv3
-    for i in range(number_fc):
-        fc = tflearn.fully_connected(fc, fc_widths[i], activation = 'leaky_relu')
-        print('fc: ', fc.get_shape())
+    biases = {'b1_enc': tf.Variable(tf.zeros([n_hidden_1], dtype=tf.float32), name='encoder_b1'),
+              # 'b2_enc': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='encoder_b2'),
+              'b3_enc': tf.Variable(tf.zeros([n_hidden_3], dtype=tf.float32), name='encoder_b3'),
+              'bconv1_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b1'),
+              'bconv2_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b2'),
+              'bconv3_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b3'),
+              'bconv4_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b4'),
+              'b1_dec': tf.Variable(tf.zeros([n_hidden_1], dtype=tf.float32), name='decoder_b1'),
+              'b2_dec': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='decoder_b2') ,
+              'b3_dec': tf.Variable(tf.zeros([16 * 900 * n_features], dtype=tf.float32), name='decoder_b3')}
+              # 'b3_dec': tf.Variable(tf.zeros([2 * 113 * n_features], dtype=tf.float32), name='decoder_b3')}
     
-    encoder = fc
-    # start decoder
-    tfc = fc
-    for i in range(number_fc-1):
-        tfc = tflearn.fully_connected(tfc, fc_widths[number_fc-2-i], activation = 'leaky_relu')
-        print('tfc: ', tfc.get_shape())
-        
-    tfc = tflearn.fully_connected(tfc, 900*16*n_features*2, activation = 'leaky_relu')
-    tfc = tf.reshape(tfc, [-1, 900, 16, n_features*2])
-    print('tfc: ', tfc.get_shape())
-    
-    
-    tconv2 = tflearn.conv_2d_transpose(tfc,n_features*2,patch_size,conv2.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv2')
-    print('tconv2:', tconv2.get_shape())
-    
-    #upsample3 = tflearn.upsample_2d(tconv2,2)
-    #print('usamp3:', upsample3.get_shape())
-    tconv3 = tflearn.conv_2d_transpose(tconv2,n_features*1,patch_size,conv1.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv3')
-    print('tconv3:', tconv3.get_shape())
-    
-    #upsample4 = tflearn.upsample_2d(tconv3,2)
-    #print('usamp4:', upsample4.get_shape())
-    tconv4 = tflearn.conv_2d_transpose(tconv3,1,patch_size,x.get_shape().as_list()[1:4], padding = 'same', activation = 'leaky_relu', name='deconv4')
-    print('tconv4:', tconv4.get_shape())
+    x = tf.reshape(x_input, [tf.shape(x_input)[0], 16, 900, 1], name='reshape_image1')
+    x = tf.to_float(x) #hard code
+    print('input: ', x.get_shape())
 
-    output = tconv4
-    print('output:', output.get_shape())
+    # 1st convolution
+    conv1 = conv(x, weights['wconv1'], biases['bconv1_enc'],strides)
+    print('conv1: ', conv1.get_shape(),weights['wconv1'].get_shape())
+
+    # 2nd convolution
+    conv2 = conv(conv1, weights['wconv2'], biases['bconv2_enc'],strides)
+    print('conv2: ', conv2.get_shape(),weights['wconv2'].get_shape())
+
+    # # 3rd convolution
+    # conv3 = conv(conv2, weights['wconv3'], biases['bconv3_enc'],strides)
+    # print('conv3: ', conv3.get_shape(),weights['wconv3'].get_shape())
+
+    # 4th convolution
+    # conv4 = conv(conv3, weights['wconv4'], biases['bconv4_enc'],[1,1,1,1])
+    # print('conv4: ', conv4.get_shape(),weights['wconv4'].get_shape())
+
+    # 1st fully connected layer
+    fc1 = tf.reshape(conv2, [-1, 16 * 900 * n_features])
+    # fc1 = tf.reshape(conv3, [-1, 2 * 113 * n_features])
+    fc1 = fully_connected(fc1, weights['wfc1'], biases['b1_enc'])
+    print('fc1: ', fc1.get_shape())
+    encoder = fc1
+
+    # 2nd fully connected layer
+    # fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
+    # print('fc2: ', fc2.get_shape())
+
+    # 3rd fully connected layer --> encoder values
+    # fc3 = fully_connected(fc2, weights['wfc3'], biases['b3_enc'])
+    # print('encoder: ', fc3.get_shape())
+
+    # decoder starts here
+    # 1st fully connected layer of decoeder
+    # tfc1 = fully_connected(fc3, tf.transpose(weights['wfc3']), biases['b2_dec'])
+    # print('tfc1: ', tfc1.get_shape())
+
+    # 2nd fully connected layer of decoder
+    # tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
+    # print('tfc2: ', tfc2.get_shape())
+
+    # 3rd and last fully connected layer of decoder
+    tfc3 = fully_connected(fc1, tf.transpose(weights['wfc1']), biases['b3_dec'])
+    tfc3 = tf.reshape(tfc3, [-1,16, 900, n_features])
+    # tfc3 = tf.reshape(tfc3, [-1,2 , 113, n_features])
+    print('tfc3: ', tfc3.get_shape())
+
+    # 1st transposed convolution
+    # tconv1 = conv_transposed(tfc3, W=weights['wconv4'], output_shape=conv3.get_shape().as_list(), name='tconv1',strides=[1,1,1,1])
+    # print('tconv1: ', tconv1.get_shape())
+    #
+    # 2nd transposed convolution
+    tconv2 = conv_transposed(tfc3, W=weights['wconv3'], output_shape=conv2.get_shape().as_list(), name='tconv2',strides=strides)
+    print('output: ', tconv2.get_shape())
+
+    # 3rd transposed convolution
+    tconv3 = conv_transposed(tconv2, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv3',strides=strides)
+    output = tconv3
+    print('output: ', tconv3.get_shape())
 
     return output, x, encoder
 
