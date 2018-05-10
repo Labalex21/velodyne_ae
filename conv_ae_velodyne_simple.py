@@ -121,14 +121,28 @@ def create_network(x, number_fc, fc_widths):
 
 def train():
     print("start training...")
+    current_string = "start training" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     with tf.Session()  as sess:
+        current_string = "init global" + "\n"
+        log_file.write(current_string)
+        log_file.flush()
         sess.run(tf.global_variables_initializer())
+        current_string = "init local" + "\n"
+        log_file.write(current_string)
+        log_file.flush()
         sess.run(tf.local_variables_initializer())
         
-    
+        current_string = "saver" + "\n"
+        log_file.write(current_string)
+        log_file.flush()
         # Add ops to save and restore all the variables.
         saver = tf.train.Saver()
         
+        current_string = "Coord and threads" + "\n"
+        log_file.write(current_string)
+        log_file.flush()
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         
@@ -137,13 +151,16 @@ def train():
         start = time.time()
         for e in range(epochs):
             print("epoch",e)
+            current_string = "epoch" + str(e) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
             for i in range(total_batch):
                 start2 = time.time()
                 _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
-                if i % 20 == 0:
+                if i % 1 == 0:
                     current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
                     log_file.write(current_string)
                     log_file.flush()
@@ -283,31 +300,52 @@ fc_size_array = np.array([[last_encoder_width,0,0],
                  [last_encoder_width,last_encoder_width/2,0],
                  [last_encoder_width*2,last_encoder_width,last_encoder_width/2],
                  [last_encoder_width,last_encoder_width/2,100]])
-        
+  
+current_string = "before loop\n"
+log_file.write(current_string)
+log_file.flush()
+
 for i in range(1,fc_array.shape[0]):
+    current_string = "in loop\n"
+    log_file.write(current_string)
+    log_file.flush()
     number_of_fc = fc_array[i]
     path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     last_encoder_width = fc_size_array[i,number_of_fc-1]
     
+    current_string = "reset graph\n"
+    log_file.write(current_string)
+    log_file.flush()
     # Reset graph
     tf.reset_default_graph()
-        
+    current_string = "read record\n"
+    log_file.write(current_string)
+    log_file.flush()    
     x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
     print("number_batches: ",number_batches)
-
+    current_string = "Number batches: " + str(number_batches) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     current_fc_size_array = fc_size_array[i,0:fc_array[i]]
+    current_string = "Create network" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
-
+    
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
 
     # optimizer
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
-
+    current_string = "train + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     #train
     train()
-
+    current_string = "Export" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
