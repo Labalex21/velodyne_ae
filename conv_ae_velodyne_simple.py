@@ -45,7 +45,7 @@ label_shape = image_shape
 # network parameters
 learning_rate = 0.002
 
-n_features = 64
+n_features = 16
 patch_size = 3
 strides = [1, 1, 1, 1]
 
