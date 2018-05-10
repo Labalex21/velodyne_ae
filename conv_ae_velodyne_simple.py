@@ -132,7 +132,7 @@ def train():
         current_string = "init local" + "\n"
         log_file.write(current_string)
         log_file.flush()
-        sess.run(tf.local_variables_initializer())
+        #sess.run(tf.local_variables_initializer())
         
         current_string = "saver" + "\n"
         log_file.write(current_string)
