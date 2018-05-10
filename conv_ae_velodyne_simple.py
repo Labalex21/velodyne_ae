@@ -91,9 +91,13 @@ def conv_transposed(x_input, W, output_shape, name,strides):
     return output
 
 def create_network(x, number_fc, fc_widths):
-    n_hidden_1 = fc_widths[0]
-    n_hidden_2 = fc_widths[1]
-    n_hidden_3 = fc_widths[2]
+    current_string = "create network + str(fc_widths[0]) + " " + str(fc_widths[1]) + " " + str(fc_widths[2]) + " \n"
+    log_file.write(current_string)
+    log_file.flush()
+    
+    n_hidden_1 = int(fc_widths[0])
+    n_hidden_2 = int(fc_widths[1])
+    n_hidden_3 = int(fc_widths[2])
     weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
                'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
                'wconv3': weight_variable(n_features, n_features, patch_size, name='w_conv1_w3'),
