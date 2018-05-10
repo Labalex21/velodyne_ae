@@ -91,19 +91,20 @@ def conv_transposed(x_input, W, output_shape, name,strides):
     return output
 
 def create_network(x, number_fc, fc_widths):
-    
+    n_hidden_1 = fc_widths[0]
+    n_hidden_2 = fc_widths[1]
+    n_hidden_3 = fc_widths[2]
     weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
                'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
                'wconv3': weight_variable(n_features, n_features, patch_size, name='w_conv1_w3'),
                'wconv4': weight_variable(n_features, n_features, patch_size, name='w_conv1_w4'),
                'wfc1': tf.Variable(xavier_init(16 * 900 * n_features, n_hidden_1), name='w_fc1'),
-               # 'wfc1': tf.Variable(xavier_init(2 * 113 * n_features, n_hidden_1), name='w_fc1'),
-               # 'wfc2': tf.Variable(xavier_init(n_hidden_1, n_hidden_2), name='w_fc2'),
-               # 'wfc3': tf.Variable(xavier_init(n_hidden_2, n_hidden_3), name='w_fc3')
+               'wfc2': tf.Variable(xavier_init(n_hidden_1, n_hidden_2), name='w_fc2'),
+               'wfc3': tf.Variable(xavier_init(n_hidden_2, n_hidden_3), name='w_fc3')
                }
 
     biases = {'b1_enc': tf.Variable(tf.zeros([n_hidden_1], dtype=tf.float32), name='encoder_b1'),
-              # 'b2_enc': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='encoder_b2'),
+              'b2_enc': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='encoder_b2'),
               'b3_enc': tf.Variable(tf.zeros([n_hidden_3], dtype=tf.float32), name='encoder_b3'),
               'bconv1_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b1'),
               'bconv2_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b2'),
@@ -387,7 +388,7 @@ for i in range(1,fc_array.shape[0]):
     current_string = "Number batches: " + str(number_batches) + "\n"
     log_file.write(current_string)
     log_file.flush()
-    current_fc_size_array = fc_size_array[i,0:fc_array[i]]
+    current_fc_size_array = fc_size_array[i]
     current_string = "Create network" + "\n"
     log_file.write(current_string)
     log_file.flush()
