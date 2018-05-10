@@ -33,7 +33,7 @@ res_file = open(res_filename,"w")
 
 # input data parameters
 epochs = 200
-batch_size = 100
+batch_size = 20
 
 # images parameters
 max_dist = 40
