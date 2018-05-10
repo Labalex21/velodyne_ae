@@ -338,7 +338,7 @@ for i in range(1,fc_array.shape[0]):
 
     # optimizer
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
-    current_string = "train + "\n"
+    current_string = "train" + "\n"
     log_file.write(current_string)
     log_file.flush()
     #train
