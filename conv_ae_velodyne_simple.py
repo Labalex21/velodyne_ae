@@ -418,8 +418,8 @@ for i in range(2,fc_array.shape[0]):
     current_string = "train" + "\n"
     log_file.write(current_string)
     log_file.flush()
-    train
-    #train()
+    #train
+    train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
