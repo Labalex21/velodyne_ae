@@ -243,10 +243,12 @@ def train():
                           "| Batch time: ", "{:.2f}".format(elapsed2), "s")
                     
             for i in range(imgs.shape[0]):
+                img_cv = np.reshape(imgs[0],[900,16,1])
+                pred_cv = np.reshape(preds[0],[900,16,1])
                 filename_input = dir_test +  str(i) + "_input.png"
                 filename_output = dir_test +  str(i)  + "_output.png"
-                cv2.imwrite(filename_input, imgs[i]*255)
-                cv2.imwrite(filename_output, preds[i]*255)
+                cv2.imwrite(filename_input, img_cv)
+                cv2.imwrite(filename_output, pred_cv)
             
                     
          
