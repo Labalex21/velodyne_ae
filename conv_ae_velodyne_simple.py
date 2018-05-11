@@ -47,7 +47,6 @@ learning_rate = 0.002
 
 n_features = 16
 patch_size = 3
-strides = [1, 1, 1, 1]
 
 def xavier_init(fan_in, fan_out, constant=1):
     """ Xavier initialization of network weights"""
@@ -228,17 +227,10 @@ def train():
             log_file.flush()
             for i in range(total_batch):
                 start2 = time.time()
-                current_string = "train\n"
-                log_file.write(current_string)
-                log_file.flush()
                 _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
-                
-                current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
-                log_file.write(current_string)
-                log_file.flush()
                 if i % 20 == 0:
                     current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
                     log_file.write(current_string)
@@ -390,7 +382,7 @@ for i in range(1,fc_array.shape[0]):
     log_file.flush()
     number_of_fc = fc_array[i]
     path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
-    dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
+    #dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     last_encoder_width = fc_size_array[i,number_of_fc-1]
     
     current_string = "reset graph\n"
