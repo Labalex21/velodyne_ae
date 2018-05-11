@@ -32,7 +32,7 @@ res_filename = "../data/results/ae_simple_" + dt.datetime.now().strftime("%Y%m%d
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 200
+epochs = 20
 batch_size = 20
 
 # images parameters
