@@ -385,12 +385,12 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
 fc_array = np.array([1,1,2,2,3,3])
-fc_size_array = np.array([[200,100,50],
+fc_size_array = np.array([[800,100,50],
                  [400,100,50],
                  [200,100,50],
-                 [200,100,50],
-                 [200,100,50],
-                 [200,100,50]])
+                 [100,100,50],
+                 [50,100,50],
+                 [20,100,50]])
   
 current_string = "before loop\n"
 log_file.write(current_string)
