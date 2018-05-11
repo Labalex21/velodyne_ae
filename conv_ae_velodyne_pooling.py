@@ -18,17 +18,17 @@ last_encoder_width = 500
 number_of_conv = 3
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
-dir_test = "../data/20180201/imgs/result_ae_di/"
+dir_test = "../data/20180201/imgs/result_ae_pooling/"
 dir_data = "../data/imgs/"
 dir_records = "../data/20180201/records_int/"
 
 # log file
-log_filename = "../data/logs/log_ae_dist_int_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+log_filename = "../data/logs/log_ae_pooling_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
 
-res_filename = "../data/results/ae_dist_int_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+res_filename = "../data/results/ae_pooling_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 res_file = open(res_filename,"w")
 
 # input data parameters
@@ -407,7 +407,7 @@ for i in range(1,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     number_of_fc = fc_array[i]
-    path_model = "../data/20180201/models/conv_ae_velodyne_int_dist_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    path_model = "../data/20180201/models/conv_ae_velodyne_pooling_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
 #    dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     last_encoder_width = fc_size_array[i,number_of_fc-1]
     
@@ -446,21 +446,21 @@ for i in range(1,fc_array.shape[0]):
     log_file.flush()
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201.txt'
-    dir_export_20180201 = '../data/features/velodyne_20180201_dist_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180201 = '../data/features/velodyne_20180201_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans_csv/'
     export_encoder_csv(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
-    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_dist_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_rot_2/'
     export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
-    dir_export_icsens = '../data/features/velodyne_icsens_dist_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_icsens = '../data/features/velodyne_icsens_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
     #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_dist_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
     #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
