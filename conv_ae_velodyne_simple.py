@@ -47,6 +47,7 @@ learning_rate = 0.002
 
 n_features = 16
 patch_size = 3
+strides = [1, 1, 1, 1]
 
 def xavier_init(fan_in, fan_out, constant=1):
     """ Xavier initialization of network weights"""
