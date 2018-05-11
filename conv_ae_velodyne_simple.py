@@ -294,10 +294,7 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(j) + " " + str(filenames[j]) + "\n"
-            log_file.write(current_string)
-            log_file.flush()
-            values, pred = sess.run([fc, output], feed_dict={x: imgs})
+            values = sess.run([fc], feed_dict={x: imgs})
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
@@ -358,13 +355,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(start_idx) + "-" + str(j) + " " + str(imgs-shape) + " " + str(filenames[start_idx]) + " "
-            log_file.write(current_string)
-            log_file.flush()
-            values, pred = sess.run([fc, output], feed_dict={x: imgs})
-            current_string = "Done.\n"
-            log_file.write(current_string)
-            log_file.flush()
+            values = sess.run([fc], feed_dict={x: imgs})
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
