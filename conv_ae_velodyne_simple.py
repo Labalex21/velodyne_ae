@@ -338,6 +338,9 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     saver = tf.train.Saver()
     with tf.Session()  as sess:
         #load model
+        current_string = "Load model" + path_model + " \n"
+        log_file.write(current_string)
+        log_file.flush()
         saver.restore(sess, path_model)
         
         for i in range(int(number_of_scans / 100) + k):
@@ -354,10 +357,13 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
+            current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + " "
             log_file.write(current_string)
             log_file.flush()
             values, pred = sess.run([fc, output], feed_dict={x: imgs})
+            current_string = "Done.\n"
+            log_file.write(current_string)
+            log_file.flush()
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
