@@ -181,11 +181,11 @@ def create_network(x_input, number_fc, fc_widths):
     # print('tconv1: ', tconv1.get_shape())
     #
     # 2nd transposed convolution
-    tconv2 = conv_transposed(tfc3, W=weights['wconv3'], output_shape=conv2.get_shape().as_list(), name='tconv2',strides=strides)
+    tconv2 = conv_transposed(tfc3, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv2',strides=strides)
     print('output: ', tconv2.get_shape())
 
     # 3rd transposed convolution
-    tconv3 = conv_transposed(tconv2, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv3',strides=strides)
+    tconv3 = conv_transposed(tconv2, W=weights['wconv1'], output_shape=x.get_shape().as_list(), name='tconv3',strides=strides)
     output = tconv3
     print('output: ', tconv3.get_shape())
 
@@ -243,15 +243,14 @@ def train():
                           "| El. time: ", "{:.2f}".format(elapsed), "s",
                           "| Batch time: ", "{:.2f}".format(elapsed2), "s")
                     
-            for i in range(imgs.shape[0]):
-                img_cv = np.reshape(imgs[0],[900,16,1])
-                pred_cv = np.reshape(preds[0],[900,16,1])
-                filename_input = dir_test +  str(i) + "_input.png"
-                filename_output = dir_test +  str(i)  + "_output.png"
-                cv2.imwrite(filename_input, img_cv)
-                cv2.imwrite(filename_output, pred_cv)
-            
-                    
+                    for i in range(imgs.shape[0]):
+                        img_cv = np.reshape(imgs[i],[900,16,1])*255/40
+                        pred_cv = np.reshape(preds[i],[900,16,1])*255/40
+                        filename_input = dir_test +  str(i) + "_input.png"
+                        filename_output = dir_test +  str(i)  + "_output.png"
+                        cv2.imwrite(filename_input, img_cv)
+                        cv2.imwrite(filename_output, pred_cv)
+                            
          
         coord.request_stop()
         coord.join(threads)
