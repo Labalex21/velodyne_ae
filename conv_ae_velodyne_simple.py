@@ -272,7 +272,8 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
-    if number_of_scans % 100 == 0:
+    scans_per_run = 20
+    if number_of_scans % scans_per_run == 0:
         k = 0
     
     # get feature values
@@ -280,10 +281,9 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     with tf.Session()  as sess:
         #load model
         saver.restore(sess, path_model)
-        
-        for i in range(int(number_of_scans / 100) + k):
-            start_idx = i * 100
-            end_idx = start_idx + 100
+        for i in range(int(number_of_scans / scans_per_run) + k):
+            start_idx = i * scans_per_run
+            end_idx = start_idx + scans_per_run
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
     
@@ -331,7 +331,8 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
-    if number_of_scans % 100 == 0:
+    scans_per_run = 20
+    if number_of_scans % scans_per_run == 0:
         k = 0
         
     # get feature values
@@ -343,9 +344,9 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
         log_file.flush()
         saver.restore(sess, path_model)
         
-        for i in range(int(number_of_scans / 100) + k):
-            start_idx = i * 100
-            end_idx = start_idx + 100
+        for i in range(int(number_of_scans / scans_per_run) + k):
+            start_idx = i * scans_per_run
+            end_idx = start_idx + scans_per_run
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
     
@@ -357,7 +358,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
                 img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + " "
+            current_string = str(start_idx) + "-" + str(j) + " " + str(imgs-shape) + " " + str(filenames[start_idx]) + " "
             log_file.write(current_string)
             log_file.flush()
             values, pred = sess.run([fc, output], feed_dict={x: imgs})
