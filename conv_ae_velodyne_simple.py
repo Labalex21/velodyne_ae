@@ -454,10 +454,10 @@ for i in range(1,fc_array.shape[0]):
 
     # get results
     cluster_size = 100
-    sequence_length = 50
+    sequence_length = 200
     log_file.write("sequence analysis...\n")
     log_file.flush()
-    compl, acc = seq.get_results(dir_export_20180201, path_array_ref,cluster_size,sequence_length)
+    compl, acc = seq.get_results(dir_export_20180410_2, path_array_ref,cluster_size,sequence_length)
     log_file.write("Done.\n")
     log_file.flush()
     current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
