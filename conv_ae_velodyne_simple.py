@@ -383,6 +383,7 @@ log_file.write(current_string)
 log_file.flush()
 
 for i in range(1,fc_array.shape[0]):
+    
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
@@ -419,7 +420,8 @@ for i in range(1,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    if i > 1:
+        train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
@@ -427,12 +429,14 @@ for i in range(1,fc_array.shape[0]):
     path_traj = '../data/traj/scan_traj_20180201.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans/'
-    export_encoder(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    if i > 1:
+        export_encoder(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_rot_2/'
-    #export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
+    if i > 1:
+        export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
