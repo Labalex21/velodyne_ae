@@ -32,7 +32,7 @@ res_filename = "../data/results/ae_dist_int_" + dt.datetime.now().strftime("%Y%m
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 20
+epochs = 50
 batch_size = 20
 
 # images parameters
@@ -45,7 +45,7 @@ label_shape = image_shape
 # network parameters
 learning_rate = 0.002
 
-n_features = 16
+n_features = 32
 patch_size = 3
 strides = [1, 1, 1, 1]
 
@@ -384,7 +384,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,2,2,3,3])
+fc_array = np.array([1,1,1,1,1,1])
 fc_size_array = np.array([[800,100,50],
                  [400,100,50],
                  [200,100,50],
@@ -396,7 +396,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(1,fc_array.shape[0]):
+for i in range(2,fc_array.shape[0]):
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
