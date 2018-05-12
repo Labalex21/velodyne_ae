@@ -370,7 +370,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,2,2,3,3])
+fc_array = np.array([1,1,1,1,1,1])
 fc_size_array = np.array([[800,100,50],
                  [400,100,50],
                  [200,100,50],
@@ -419,7 +419,7 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    train()
+    #train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
