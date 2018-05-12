@@ -463,8 +463,8 @@ for i in range(1,fc_array.shape[0]):
     path_array_ref = [dir_export_20180201]
 
     # get results
-    cluster_size = 100
-    sequence_length = 50
+    cluster_size = 500
+    sequence_length = 100
     log_file.write("sequence analysis...\n")
     log_file.flush()
     compl, acc = seq.get_results(dir_export_20180410_2, path_array_ref,cluster_size,sequence_length)
