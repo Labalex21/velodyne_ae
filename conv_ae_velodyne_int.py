@@ -105,7 +105,7 @@ def create_network(x_input, number_fc, fc_widths):
     n_hidden_1 = int(fc_widths[0])
     n_hidden_2 = int(fc_widths[1])
     n_hidden_3 = int(fc_widths[2])
-    weights = {'wconv1': weight_variable(2, n_features, patch_size, name='w_conv1_w1'),
+    weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
                'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
                'wconv3': weight_variable(n_features, n_features, patch_size, name='w_conv1_w3'),
                'wconv4': weight_variable(n_features, n_features, patch_size, name='w_conv1_w4'),
