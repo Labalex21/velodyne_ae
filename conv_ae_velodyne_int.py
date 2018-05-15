@@ -127,8 +127,8 @@ def create_network(x_input, number_fc, fc_widths):
               # 'b3_dec': tf.Variable(tf.zeros([2 * 113 * n_features], dtype=tf.float32), name='decoder_b3')}
     
     x = tf.reshape(x_input[:,:,:,1], [tf.shape(x_input)[0], 900, 16, 1], name='reshape_image1')
-    x = x/100;
     x = tf.to_float(x) #hard code
+    x = x/100.0;
     print('input: ', x.get_shape())
     # Add print operation
     x = tf.Print(x, [x], message="This is x: ")
