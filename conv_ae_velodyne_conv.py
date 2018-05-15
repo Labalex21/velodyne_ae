@@ -267,7 +267,7 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
-    scans_per_run = 1
+    scans_per_run = 20
     if number_of_scans % scans_per_run == 0:
         k = 0
     
