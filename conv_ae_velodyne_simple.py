@@ -36,7 +36,7 @@ epochs = 20
 batch_size = 20
 
 # images parameters
-max_dist = 40
+max_dist = 40.0
 height = 900
 width = 16
 image_shape = [height,width]
@@ -128,6 +128,7 @@ def create_network(x_input, number_fc, fc_widths):
     
     x = tf.reshape(x_input, [tf.shape(x_input)[0], 16, 900, 1], name='reshape_image1')
     x = tf.to_float(x) #hard code
+    x = x/max_dist
     print('input: ', x.get_shape())
 
     # 1st convolution
