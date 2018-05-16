@@ -127,7 +127,10 @@ def create_network(x_input, number_fc, fc_widths):
               # 'b3_dec': tf.Variable(tf.zeros([2 * 113 * n_features], dtype=tf.float32), name='decoder_b3')}
     
     x = tf.reshape(x_input, [tf.shape(x_input)[0], 900, 16, 2], name='reshape_image1')
+    x[:,:,:,0] = x[:,:,:,0]/max_dist
+    x[:,:,:,0] = x[:,:,:,1]/100.0
     x = tf.to_float(x) #hard code
+   
     print('input: ', x.get_shape())
     # Add print operation
     x = tf.Print(x, [x], message="This is x: ")
@@ -384,7 +387,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,2,2,3,3])
+fc_array = np.array([1,1,1,1,1,1])
 fc_size_array = np.array([[800,100,50],
                  [400,100,50],
                  [200,100,50],
@@ -396,7 +399,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(1,fc_array.shape[0]):
+for i in range(2,fc_array.shape[0]):
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
