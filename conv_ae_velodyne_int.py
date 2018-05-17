@@ -32,7 +32,7 @@ res_filename = "../data/results/ae_int_3_" + dt.datetime.now().strftime("%Y%m%d_
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 20
+epochs = 100
 batch_size = 20
 
 # images parameters
