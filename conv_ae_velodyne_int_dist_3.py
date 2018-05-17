@@ -424,10 +424,10 @@ for i in range(2,fc_array.shape[0]):
     current_string = "Create network" + "\n"
     log_file.write(current_string)
     log_file.flush()
-    output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
+    output, x_out, fc = create_network(x,number_of_fc,current_fc_size_array)
     
     # loss
-    loss = tf.reduce_mean(tf.pow(x - output, 2))
+    loss = tf.reduce_mean(tf.pow(x_out - output, 2))
 
     # optimizer
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
