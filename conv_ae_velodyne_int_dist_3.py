@@ -32,7 +32,7 @@ res_filename = "../data/results/ae_dist_int_3_" + dt.datetime.now().strftime("%Y
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 20
+epochs = 100
 batch_size = 20
 
 # images parameters
@@ -435,7 +435,7 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
