@@ -103,7 +103,7 @@ def create_network(x_input, number_fc, fc_widths):
     log_file.flush()
     
     n_hidden_1 = int(fc_widths[0])
-    n_hidden_2 = int(fc_widths[0])/2
+    n_hidden_2 = int(fc_widths[0]/2)
     n_hidden_3 = int(fc_widths[2])
     weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
                'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
