@@ -356,6 +356,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.flush()
                 values = np.array(values)
                 start_idx += i_file*1000
+                end_idx = start_idx + scans_per_run
                 encoder_values[start_idx:end_idx, :] = values
             i_file+=1
             
