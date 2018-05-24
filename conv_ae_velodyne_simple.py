@@ -338,6 +338,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
     with tf.Session()  as sess:
         #load model
         saver.restore(sess, path_model)
+        i_file = 0
         for filename in filenames:
             scans = np.load(filename)
             scans = np.reshape(scans,[scans.shape[0],scans.shape[1],scans.shape[2],1])
@@ -350,11 +351,13 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
 
                 imgs = scans[start_idx:end_idx]
                 values = sess.run([fc], feed_dict={x: imgs})
-                current_string = str(start_idx) + " " + str(filenames[start_idx]) + "\n"
+                current_string = str(start_idx) + " " + str(filename) + "\n"
                 log_file.write(current_string)
                 log_file.flush()
                 values = np.array(values)
+                start_idx += i_file*1000
                 encoder_values[start_idx:end_idx, :] = values
+            i_file+=1
             
     # export values to json file
     with open(path_export, 'w') as f:
