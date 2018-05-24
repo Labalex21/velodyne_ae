@@ -343,7 +343,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
             scans = np.load(filename)
             scans = np.reshape(scans,[scans.shape[0],scans.shape[1],scans.shape[2],1])
             
-            for i in range(int(number_of_scans / scans_per_run) + k):
+            for i in range(int(1000 / scans_per_run) + k):
                 start_idx = i * scans_per_run
                 end_idx = start_idx + scans_per_run
                 if end_idx > number_of_scans:
