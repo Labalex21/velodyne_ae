@@ -350,7 +350,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
 
                 imgs = scans[start_idx:end_idx]
                 values = sess.run([fc], feed_dict={x: imgs})
-                current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
+                current_string = str(start_idx) + " " + str(filenames[start_idx]) + "\n"
                 log_file.write(current_string)
                 log_file.flush()
                 values = np.array(values)
