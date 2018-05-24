@@ -314,7 +314,52 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
                 #string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
                 #cv2.imwrite(string_img, imgs[j]*255)
                 #cv2.imwrite(string_pred, pred[j]*255)
-                
+
+def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_width):
+    # get trajectory
+    traj = np.load(path_current_traj)[:,3:5]
+    
+    # get all images
+    filenames = fh.files_in_folder(path_data)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
+    number_of_scans = filenames.shape[0]*1000
+    traj = traj[0:number_of_scans,:]
+    
+    # save feature values here
+    encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
+    k = 1
+    scans_per_run = 20
+    if number_of_scans % scans_per_run == 0:
+        k = 0
+    
+    # get feature values
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
+        for filename in filenames:
+            scans = np.load(filename)
+            scans = np.reshape(scans,[scans.shape[0],scans.shape[1],scans.shape[2],1])
+            
+            for i in range(int(number_of_scans / scans_per_run) + k):
+                start_idx = i * scans_per_run
+                end_idx = start_idx + scans_per_run
+                if end_idx > number_of_scans:
+                    end_idx = number_of_scans
+
+                imgs = scans[start_idx:end_idx]
+                values = sess.run([fc], feed_dict={x: imgs})
+                current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
+                values = np.array(values)
+                encoder_values[start_idx:end_idx, :] = values
+            
+    # export values to json file
+    with open(path_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+        
 def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
     traj = fh.get_scan_trajectory_csv(path_current_traj)
@@ -426,10 +471,12 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     # export encoder    
-    path_traj = '../data/traj/scan_traj_20180201_all_new.txt'
+    #path_traj = '../data/traj/scan_traj_20180201_all_new.txt'
+    path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180201/scans_utm_2/'
-    export_encoder(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    #dir_data = '../data/20180201/scans_utm_2/'
+    dir_data = '../data/20180201/scans_np/'
+    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
