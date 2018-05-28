@@ -233,7 +233,7 @@ def train():
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
-                if i % 20 == 0:
+                if i % 200 == 0:
                     current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
                     log_file.write(current_string)
                     log_file.flush()
