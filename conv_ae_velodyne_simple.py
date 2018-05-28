@@ -342,7 +342,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         saver.restore(sess, path_model)
         for i in range(filenames.shape[0]-1):
             scans = np.load(filenames[i])
-            scans = np.reshape(scans[0],[scans.shape[0],scans.shape[1],scans.shape[2],1])*40
+            scans = np.reshape(scans[0],[scans.shape[0],scans.shape[1],scans.shape[2],1])
             
             values = sess.run([fc], feed_dict={x: scans})
             start_idx = i*scans_per_run
