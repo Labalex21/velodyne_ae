@@ -229,6 +229,9 @@ def train():
             log_file.flush()
             for i in range(total_batch):
                 start2 = time.time()
+                current_string = "batch: " + str(i) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
                 _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
@@ -244,13 +247,13 @@ def train():
                           "| El. time: ", "{:.2f}".format(elapsed), "s",
                           "| Batch time: ", "{:.2f}".format(elapsed2), "s")
                     
-                    for i in range(imgs.shape[0]):
-                        img_cv = np.reshape(imgs[i],[900,16,1])*255/40
-                        pred_cv = np.reshape(preds[i],[900,16,1])*255/40
-                        filename_input = dir_test +  str(i) + "_input.png"
-                        filename_output = dir_test +  str(i)  + "_output.png"
-                        cv2.imwrite(filename_input, img_cv)
-                        cv2.imwrite(filename_output, pred_cv)
+                    #for i in range(imgs.shape[0]):
+                        #img_cv = np.reshape(imgs[i],[900,16,1])*255/40
+                        #pred_cv = np.reshape(preds[i],[900,16,1])*255/40
+                        #filename_input = dir_test +  str(i) + "_input.png"
+                        #filename_output = dir_test +  str(i)  + "_output.png"
+                        #cv2.imwrite(filename_input, img_cv)
+                        #cv2.imwrite(filename_output, pred_cv)
                             
          
         coord.request_stop()
