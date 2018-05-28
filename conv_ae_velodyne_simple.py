@@ -229,9 +229,6 @@ def train():
             log_file.flush()
             for i in range(total_batch):
                 start2 = time.time()
-                current_string = "batch: " + str(i) + "\n"
-                log_file.write(current_string)
-                log_file.flush()
                 _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
