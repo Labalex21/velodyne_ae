@@ -426,7 +426,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(0,fc_array.shape[0]):
+for i in range(2,fc_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
