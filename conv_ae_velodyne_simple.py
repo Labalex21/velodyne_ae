@@ -444,7 +444,7 @@ for i in range(2,fc_array.shape[0]):
     current_string = "read record\n"
     log_file.write(current_string)
     log_file.flush()    
-    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000*100)
+    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000*100000)
     print("number_batches: ",number_batches)
     current_string = "Number batches: " + str(number_batches) + "\n"
     log_file.write(current_string)
