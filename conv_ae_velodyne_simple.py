@@ -126,7 +126,7 @@ def create_network(x_input, number_fc, fc_widths):
               'b3_dec': tf.Variable(tf.zeros([16 * 900 * n_features], dtype=tf.float32), name='decoder_b3')}
               # 'b3_dec': tf.Variable(tf.zeros([2 * 113 * n_features], dtype=tf.float32), name='decoder_b3')}
     
-    x = tf.reshape(x_input, [tf.shape(x_input)[0], 16, 900, 1], name='reshape_image1')
+    x = tf.reshape(x_input[0], [tf.shape(x_input)[0], 16, 900, 1], name='reshape_image1')
     x = tf.to_float(x) #hard code
     x = x/max_dist
     print('input: ', x.get_shape())
@@ -323,13 +323,15 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
     filenames = fh.files_in_folder(path_data)
     current_string = str(filenames.shape[0]) + " files\n"
     log_file.write(current_string)
-    number_of_scans = filenames.shape[0]*1000
+    scans = np.load(filenames[0])
+    scans_per_run = scans.shape[0]
+    number_of_scans = (filenames.shape[0]-1)*scans_per_run
     traj = traj[0:number_of_scans,:]
     
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
-    scans_per_run = 20
+    
     if number_of_scans % scans_per_run == 0:
         k = 0
     
@@ -338,27 +340,19 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
     with tf.Session()  as sess:
         #load model
         saver.restore(sess, path_model)
-        i_file = 0
-        for filename in filenames:
-            scans = np.load(filename)
-            scans = np.reshape(scans,[scans.shape[0],scans.shape[1],scans.shape[2],1])*40
+        for i in range(filenames.shape[0]-1):
+            scans = np.load(filenames[i])
+            scans = np.reshape(scans[0],[scans.shape[0],scans.shape[1],scans.shape[2],1])*40
             
-            for i in range(int(1000 / scans_per_run) + k):
-                start_idx = i * scans_per_run
-                end_idx = start_idx + scans_per_run
-                if end_idx > number_of_scans:
-                    end_idx = number_of_scans
-
-                imgs = scans[start_idx:end_idx]
-                values = sess.run([fc], feed_dict={x: imgs})
-                current_string = str(start_idx) + " " + str(filename) + "\n"
-                log_file.write(current_string)
-                log_file.flush()
-                values = np.array(values)
-                start_idx += i_file*1000
-                end_idx = start_idx + scans_per_run
-                encoder_values[start_idx:end_idx, :] = values
-            i_file+=1
+            values = sess.run([fc], feed_dict={x: scans})
+            start_idx = i*scans_per_run
+            end_idx = start_idx + scans_per_run
+            encoder_values[start_idx:end_idx, :] = np.array(values)
+            
+            current_string = str(i) + " " + str(filenames[i]) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
+            
             
     # export values to json file
     with open(path_export, 'w') as f:
@@ -432,7 +426,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(2,fc_array.shape[0]):
+for i in range(0,fc_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
@@ -470,7 +464,7 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
@@ -479,13 +473,13 @@ for i in range(2,fc_array.shape[0]):
     path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
-    dir_data = '../data/20180201/scans_np/'
+    dir_data = '../data/20180201/scans_npy_1/'
     export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_rot_2/'
-    #export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
+    export_encode_npy(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
