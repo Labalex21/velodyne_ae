@@ -20,7 +20,7 @@ fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae_simple/"
 dir_data = "../data/imgs/"
-dir_records = "../data/20180201/records/"
+dir_records = "../data/20180201/records2/"
 
 # log file
 log_filename = "../data/logs/log_ae_simple_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
