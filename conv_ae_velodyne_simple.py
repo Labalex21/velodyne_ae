@@ -466,7 +466,8 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    if i > 2:
+        train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
@@ -498,8 +499,8 @@ for i in range(2,fc_array.shape[0]):
     path_array_ref = [dir_export_20180201]
 
     # get results
-    cluster_size = 500
-    sequence_length = 100
+    cluster_size = 200
+    sequence_length = 200
     log_file.write("sequence analysis...\n")
     log_file.flush()
     compl, acc = seq.get_results(dir_export_20180410_2, path_array_ref,cluster_size,sequence_length)
