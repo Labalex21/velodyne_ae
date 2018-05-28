@@ -173,8 +173,8 @@ def create_network(x_input, number_fc, fc_widths):
 
     # 3rd and last fully connected layer of decoder
     tfc3 = fully_connected(tfc2, tf.transpose(weights['wfc1']), biases['b3_dec'])
-    tfc3 = tf.reshape(tfc3, [-1,16, 900, n_features])
-    # tfc3 = tf.reshape(tfc3, [-1,2 , 113, n_features])
+    tfc3 = tf.reshape(tfc3, [-1,900, 16, n_features])
+    # tfc3 = tf.reshape(tfc3, [-1,113 , 2, n_features])
     print('tfc3: ', tfc3.get_shape())
 
     # 1st transposed convolution
