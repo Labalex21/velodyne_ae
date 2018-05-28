@@ -65,14 +65,16 @@ def read_tfrecord(folder, image_shape, batch_size = 100, num_epochs = 100):
     # Convert the image data from string back to the numbers
     image = tf.decode_raw(features['train/input'], tf.float64)
     image = tf.to_float(image)
+    print("img in file handler1: ",image.shape)
     
     # Reshape image data into the original shape
     image = tf.reshape(image, image_shape, name='reshape_image')
+    print("img in file handler1: ",image.shape)
     image = tf.to_float(image)
 
     # Creates batches by randomly shuffling tensors    
     images = tf.train.shuffle_batch([image], batch_size=batch_size, capacity=100000, allow_smaller_final_batch = True, num_threads=1, min_after_dequeue=number_batches)
-    
+    print("img in file handler1: ",images.shape)
     return images, number_batches        
 
         
