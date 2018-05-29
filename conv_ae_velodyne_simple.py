@@ -482,7 +482,7 @@ for i in range(2,fc_array.shape[0]):
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180410/scans_rot_2/'
+    dir_data = '../data/20180410/scans_npy_2/'
     export_encoder_npy(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
