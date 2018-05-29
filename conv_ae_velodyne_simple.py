@@ -473,7 +473,7 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     # export encoder    
-    path_traj = '../data/traj/scan_traj_20180201_all_new.txt'
+    path_traj = '../data/traj/scan_traj_20180201_1.txt'
     #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
