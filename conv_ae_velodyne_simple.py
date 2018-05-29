@@ -319,7 +319,7 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
 
 def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
-    traj = np.load(path_current_traj)[:,3:5]
+    traj = fh.get_scan_trajectory_csv(path_current_traj)
     
     # get all images
     filenames = fh.files_in_folder(path_data)
@@ -473,13 +473,12 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     # export encoder    
-    #path_traj = '../data/traj/scan_traj_20180201_all_new.txt'
-    path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
+    path_traj = '../data/traj/scan_traj_20180201_all_new.txt'
+    #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
     dir_data = '../data/20180201/scans_npy_1/'
-    if i > 2:
-        export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
