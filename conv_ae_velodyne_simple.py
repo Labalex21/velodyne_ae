@@ -264,6 +264,7 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     # get trajectory
     traj = fh.get_scan_trajectory(path_current_traj)
     
+    
     # get all images
     filenames = fh.files_in_folder(path_data)
     current_string = str(filenames.shape[0]) + " files\n"
@@ -320,6 +321,7 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
 def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
     traj = fh.get_scan_trajectory_csv(path_current_traj)
+    traj = traj[:,1:3]
     
     # get all images
     filenames = fh.files_in_folder(path_data)
@@ -467,7 +469,7 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    if i > 2:
+    if i > 4:
         train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
