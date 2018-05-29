@@ -502,7 +502,7 @@ for i in range(2,fc_array.shape[0]):
     path_array_ref = [dir_export_20180201]
 
     # get results
-    cluster_size = 200
+    cluster_size = 1000
     sequence_length = 200
     log_file.write("sequence analysis...\n")
     log_file.flush()
