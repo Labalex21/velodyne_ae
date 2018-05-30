@@ -420,18 +420,18 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
 fc_array = np.array([1,1,1,1,1,1])
-fc_size_array = np.array([[800,100,50],
-                 [400,100,50],
+fc_size_array = np.array([[800,400,50],
+                 [400,200,50],
                  [200,100,50],
-                 [100,100,50],
-                 [50,100,50],
-                 [20,100,50]])
+                 [100,50,50],
+                 [50,25,50],
+                 [20,10,50]])
   
 current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(2,fc_array.shape[0]):
+for i in range(1,fc_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
@@ -469,8 +469,7 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    if i > 4:
-        train()
+    train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
