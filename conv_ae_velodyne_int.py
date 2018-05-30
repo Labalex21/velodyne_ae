@@ -15,7 +15,7 @@ import json
 from activations import lrelu # leaky rectified linear activation function
 
 last_encoder_width = 500
-number_of_conv = 3
+number_of_conv = 2
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae_di3/"
@@ -23,12 +23,12 @@ dir_data = "../data/imgs/"
 dir_records = "../data/20180201/records_int/"
 
 # log file
-log_filename = "../data/logs/log_ae_int_3_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+log_filename = "../data/logs/log_ae_int_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
 
-res_filename = "../data/results/ae_int_3_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+res_filename = "../data/results/ae_int_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 res_file = open(res_filename,"w")
 
 # input data parameters
@@ -311,6 +311,51 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
                 #string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
                 #cv2.imwrite(string_img, imgs[j]*255)
                 #cv2.imwrite(string_pred, pred[j]*255)
+
+def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_width):
+    # get trajectory
+    traj = fh.get_scan_trajectory_csv(path_current_traj)
+    traj = traj[:,1:3]
+    
+    # get all images
+    filenames = fh.files_in_folder(path_data)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
+    scans = np.load(filenames[0])
+    scans_per_run = scans.shape[0]
+    number_of_scans = (filenames.shape[0]-1)*scans_per_run
+    traj = traj[0:number_of_scans,:]
+    
+    # save feature values here
+    encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
+    k = 1
+    
+    if number_of_scans % scans_per_run == 0:
+        k = 0
+    
+    # get feature values
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
+        for i in range(filenames.shape[0]-1):
+            scans = np.load(filenames[i])
+            scans = np.reshape(scans[:,:,:,0],[scans.shape[0],scans.shape[1],scans.shape[2],1])
+            
+            values = sess.run([fc], feed_dict={x: scans})
+            start_idx = i*scans_per_run
+            end_idx = start_idx + scans_per_run
+            encoder_values[start_idx:end_idx, :] = np.array(values)
+            
+            if i % 200 is 0:
+                current_string = str(i) + " " + str(filenames[i]) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
+            
+            
+    # export values to json file
+    with open(path_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
                 
 def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
@@ -368,18 +413,18 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
 fc_array = np.array([1,1,1,1,1,1])
-fc_size_array = np.array([[800,200,50],
-                 [400,100,50],
+fc_size_array = np.array([[800,400,50],
+                 [400,200,50],
                  [200,100,50],
-                 [100,100,50],
-                 [50,100,50],
-                 [20,100,50]])
+                 [100,50,50],
+                 [50,25,50],
+                 [20,10,50]])
   
 current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(0,fc_array.shape[0]):
+for i in range(1,fc_array.shape[0]):
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
@@ -421,22 +466,24 @@ for i in range(0,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     # export encoder    
-    path_traj = '../data/traj/scan_traj_20180201_all_new.txt'
-    dir_export_20180201 = '../data/features/velodyne_20180201_int_3_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180201/scans_utm_2/'
-    export_encoder(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    path_traj = '../data/traj/scan_traj_20180201_1.txt'
+    #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
+    dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    #dir_data = '../data/20180201/scans_utm_2/'
+    dir_data = '../data/20180201/scans_npy_1/'
+    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
-    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_int_3_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180410/scans_rot_2/'
-    export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
+    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180410/scans_npy_2/'
+    export_encoder_npy(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
 
-    dir_export_icsens = '../data/features/velodyne_icsens_int_3_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
     #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_int_3_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
     #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
@@ -446,8 +493,8 @@ for i in range(0,fc_array.shape[0]):
     path_array_ref = [dir_export_20180201]
 
     # get results
-    cluster_size = 500
-    sequence_length = 100
+    cluster_size = 1000
+    sequence_length = 200
     log_file.write("sequence analysis...\n")
     log_file.flush()
     compl, acc = seq.get_results(dir_export_20180410_2, path_array_ref,cluster_size,sequence_length)
