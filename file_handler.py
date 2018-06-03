@@ -155,7 +155,7 @@ def get_scan_trajectory_csv(filename):
     with open(filename, 'r') as f:
         positions = []
         for line in f:
-            values = [float(x) for x in line.strip().split(',')]
+            values = [float(x) for x in line.strip().split(',')[0:6]]
             positions.append([values[0], values[2], values[3]])
             
     return np.array(positions)
