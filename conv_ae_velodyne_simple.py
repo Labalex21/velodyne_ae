@@ -474,7 +474,7 @@ for i in range(1,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     # export encoder    
-    path_traj = '../data/traj/scan_traj_20180201_1.txt'
+    path_traj = '../data/traj/scan_traj_20180531_2.txt'
     #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
     dir_export_20180531 = '../data/features/velodyne_20180531_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
@@ -498,14 +498,14 @@ for i in range(1,fc_array.shape[0]):
 
    
     #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
-    path_array_ref = [dir_export_20180201]
+    path_array_ref = [dir_export_20180531]
 
     # get results
     cluster_size = 1000
     sequence_length = 200
     log_file.write("sequence analysis...\n")
     log_file.flush()
-    compl, acc = seq.get_results(dir_export_20180410_2, path_array_ref,cluster_size,sequence_length)
+    compl, acc = seq.get_results(dir_export_20180410_1, path_array_ref,cluster_size,sequence_length)
     log_file.write("Done.\n")
     log_file.flush()
     current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
