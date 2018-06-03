@@ -20,7 +20,7 @@ fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae_simple/"
 dir_data = "../data/imgs/"
-dir_records = "../data/20180201/records2/"
+dir_records = "../data/20180531/records/"
 
 # log file
 log_filename = "../data/logs/log_ae_simple_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
@@ -476,15 +476,15 @@ for i in range(1,fc_array.shape[0]):
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180201_1.txt'
     #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
-    dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180531 = '../data/features/velodyne_20180531_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
-    dir_data = '../data/20180201/scans_npy_1/'
-    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    dir_data = '../data/20180531/scans_npy_2/'
+    export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
-    path_traj = '../data/traj/scan_traj_20180410_2.txt'
-    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180410/scans_npy_2/'
-    export_encoder_npy(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
+    path_traj = '../data/traj/scan_traj_20180410_1.txt'
+    dir_export_20180410_1 = '../data/features/velodyne_20180410_1_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180410/scans_npy_1/'
+    export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
