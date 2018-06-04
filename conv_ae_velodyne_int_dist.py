@@ -368,7 +368,9 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.write(current_string)
                 log_file.flush()
             
-            
+    encoder = np.delete(encoder,np.arange(8150,8600),axis=0)
+    trajectory = np.delete(trajectory,np.arange(8150,8600),axis=0)
+    
     # export values to json file
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
