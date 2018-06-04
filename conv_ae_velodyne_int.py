@@ -131,7 +131,6 @@ def create_network(x_input, number_fc, fc_widths):
     x = x/100.0;
     print('input: ', x.get_shape())
     # Add print operation
-    x = tf.Print(x, [x], message="This is x: ")
 
     # 1st convolution
     conv1 = conv(x, weights['wconv1'], biases['bconv1_enc'],strides)
@@ -340,7 +339,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         saver.restore(sess, path_model)
         for i in range(filenames.shape[0]-1):
             scans = np.load(filenames[i])
-            scans = np.reshape(scans[:,:,:,0],[scans.shape[0],scans.shape[1],scans.shape[2],1])
+            scans = np.reshape(scans[:,:,:,1],[scans.shape[0],scans.shape[1],scans.shape[2],1])
             
             values = sess.run([fc], feed_dict={x: scans})
             start_idx = i*scans_per_run
@@ -352,7 +351,9 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.write(current_string)
                 log_file.flush()
             
-            
+    encoder = np.delete(encoder,np.arange(8150,8600),axis=0)
+    trajectory = np.delete(trajectory,np.arange(8150,8600),axis=0)
+    
     # export values to json file
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
@@ -424,7 +425,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(1,fc_array.shape[0]):
+for i in range(2,fc_array.shape[0]):
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
@@ -468,22 +469,22 @@ for i in range(1,fc_array.shape[0]):
     # export encoder    
     path_traj = '../data/traj/scan_traj_20180531_2.txt'
     #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
-    dir_export_20180531 = '../data/features/velodyne_20180531_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180531 = '../data/features/velodyne_20180531_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
     dir_data = '../data/20180531/scans_npy_2/'
     export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
-    path_traj = '../data/traj/scan_traj_20180410_1.txt'
-    dir_export_20180410_1 = '../data/features/velodyne_20180410_1_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    path_traj = '../data/traj/scan_traj_20180410_2.txt'
+    dir_export_20180410_1 = '../data/features/velodyne_20180410_2_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_npy_1/'
     export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
-    dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_icsens = '../data/features/velodyne_icsens_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
     #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
     #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
