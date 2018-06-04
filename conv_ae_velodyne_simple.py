@@ -358,7 +358,9 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.write(current_string)
                 log_file.flush()
             
-            
+    encoder = np.delete(encoder,np.arange(8300,8570),axis=0)
+    trajectory = np.delete(trajectory,np.arange(8300,8570),axis=0)
+    
     # export values to json file
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
@@ -481,9 +483,9 @@ for i in range(1,fc_array.shape[0]):
     dir_data = '../data/20180531/scans_npy_2/'
     export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
-    path_traj = '../data/traj/scan_traj_20180410_1.txt'
-    dir_export_20180410_1 = '../data/features/velodyne_20180410_1_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180410/scans_npy_1/'
+    path_traj = '../data/traj/scan_traj_20180410_2.txt'
+    dir_export_20180410_1 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180410/scans_npy_2/'
     export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
