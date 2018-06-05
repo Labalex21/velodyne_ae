@@ -115,9 +115,9 @@ def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
     tree_ref = KDTree(trajectory_r[:,0:2])
     for i in range(1,len(path_ref_vector)):
         reference_tmp, trajectory_r_tmp = import_encoder_traj(path_ref_vector[i])
-        print(reference_tmp.shape)
-        reference_tmp, trajectory_r_tmp = filter_by_tree(tree_ref, trajectory_r_tmp,reference_tmp)
-        print(reference_tmp.shape)
+        #print(reference_tmp.shape)
+        #reference_tmp, trajectory_r_tmp = filter_by_tree(tree_ref, trajectory_r_tmp,reference_tmp)
+        #print(reference_tmp.shape)
         reference = np.concatenate((reference,reference_tmp), axis=0)
         trajectory_r = np.concatenate((trajectory_r,trajectory_r_tmp), axis=0)
     features, trajectory_f = import_encoder_traj(path_online)
