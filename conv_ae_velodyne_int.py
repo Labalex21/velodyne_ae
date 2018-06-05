@@ -352,8 +352,12 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.flush()
             
     if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
-        encoder_values = np.delete(encoder_values,np.arange(8150,8600),axis=0)
-        traj = np.delete(traj,np.arange(8150,8600),axis=0)
+        encoder_values = np.delete(encoder_values,np.arange(8100,8620),axis=0)
+        traj = np.delete(traj,np.arange(8100,8620),axis=0)
+        
+    if path_current_traj == '../data/traj/scan_traj_20180531_2.txt':
+        encoder_values = encoder_values[18000:24000]
+        traj = traj[18000:24000]
     
     # export values to json file
     with open(path_export, 'w') as f:
@@ -467,7 +471,12 @@ for i in range(2,fc_array.shape[0]):
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
-    # export encoder    
+    # export encoder 
+    path_traj = '../data/traj/scan_traj_20180201_2.txt'
+    dir_export_20180201 = '../data/features/velodyne_20180201_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180201/scans_npy_2/'
+    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    
     path_traj = '../data/traj/scan_traj_20180531_2.txt'
     #path_traj = '../data/traj/trajMap_01_02_2018_zweiterversuch.npy'
     dir_export_20180531 = '../data/features/velodyne_20180531_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
@@ -492,7 +501,7 @@ for i in range(2,fc_array.shape[0]):
 
    
     #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
-    path_array_ref = [dir_export_20180531]
+    path_array_ref = [dir_export_20180201,dir_export_20180531]
 
     # get results
     cluster_size = 1000
