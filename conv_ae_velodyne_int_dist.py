@@ -368,7 +368,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.write(current_string)
                 log_file.flush()
             
-    if path_current_traj is '../data/traj/scan_traj_20180410_2.txt':
+    if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
         encoder_values = np.delete(encoder_values,np.arange(8150,8600),axis=0)
         trajectory = np.delete(trajectory,np.arange(8150,8600),axis=0)
     
