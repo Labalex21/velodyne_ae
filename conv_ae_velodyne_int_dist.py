@@ -373,8 +373,8 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         traj = np.delete(traj,np.arange(8100,8620),axis=0)
         
     if path_current_traj == '../data/traj/scan_traj_20180531_2.txt':
-        encoder_values = encoder_values[18000:24000]
-        traj = traj[18000:24000]
+        encoder_values = encoder_values[24000:36500]
+        traj = traj[24000:36500]
     
     # export values to json file
     with open(path_export, 'w') as f:
