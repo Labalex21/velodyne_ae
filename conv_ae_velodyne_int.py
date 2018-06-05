@@ -472,9 +472,9 @@ for i in range(2,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     # export encoder 
-    path_traj = '../data/traj/scan_traj_20180201_2.txt'
+    path_traj = '../data/traj/scan_traj_20180201_1.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_int_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180201/scans_npy_2/'
+    dir_data = '../data/20180201/scans_npy_1/'
     export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
     
     path_traj = '../data/traj/scan_traj_20180531_2.txt'
