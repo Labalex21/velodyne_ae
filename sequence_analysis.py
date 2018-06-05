@@ -65,6 +65,10 @@ def interpolate_labels(traj, labels, label_dist = 0.3):
         point_dist = np.linalg.norm(traj[i]-last_point)
         if point_dist < label_dist:
             continue
+        if point_dist > 50:
+            last_point = traj[i]
+            last_label = labels[i]
+            continue
         number_points = int(point_dist/label_dist)
         for j in range(number_points):
             w1 = (1-(j+1)*(label_dist)/point_dist)
