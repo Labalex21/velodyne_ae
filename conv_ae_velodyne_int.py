@@ -359,7 +359,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         encoder_values2 = encoder_values[24000:36500]
         encoder_values = np.concatenate((encoder_values1,encoder_values2),axis=0)
         traj1 = traj[800:3500]
-        traj2 = traj[24000:36500]
+        traj2 = traj[23000:36500]
         traj = np.concatenate((traj1,traj2),axis=0)
     
     # export values to json file
