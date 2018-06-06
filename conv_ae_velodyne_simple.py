@@ -361,6 +361,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         encoder_values = np.delete(encoder_values,np.arange(8100,8620),axis=0)
         traj = np.delete(traj,np.arange(8100,8620),axis=0)
         
+    if path_current_traj == '../data/traj/scan_traj_20180201_1.txt':
+        encoder_values = np.delete(encoder_values,np.arange(23200,23800),axis=0)
+        traj = np.delete(traj,np.arange(23200,23800),axis=0)
+        
     if path_current_traj == '../data/traj/scan_traj_20180531_2.txt':
         encoder_values1 = encoder_values[800:3500]
         encoder_values2 = encoder_values[23000:36500]
