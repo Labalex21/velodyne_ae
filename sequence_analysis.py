@@ -41,15 +41,6 @@ def getMinIdx(seq, matrix):
     #    idxMax = np.argmax(v_bool)+seq.shape[0], np.max(v_bool)
     return idxMax
     
-def checkMax(idx):
-    if idx <= trajectory.shape[0]-trajectory3.shape[0] or idx <= sequence_length:
-        return True
-    # check for distance jump
-    for i in range(sequence_length):
-        if getDist2(trajectory[idx-i],trajectory[idx-i-1]) > 20**2:
-            return False
-    return True
-    
 def filter_by_tree(tree, traj, features):
     distances = tree.query_radius(traj[:,0:2],r = 10,count_only=True)
     traj = traj[(distances == 0)]
@@ -84,39 +75,12 @@ def interpolate_labels(traj, labels, label_dist = 0.3):
         last_label = labels[i]
     return np.array(new_traj), np.array(new_labels)
 
-def sample_data(data,traj,seg_dist=0.3):
-    # f = 12.5 Hz --> every 0.08 s
-    n = traj.shape[0]
-    data_new = []
-    traj_new =[]
-    dist_all = 0
-    #dist_sum = 0
-    for i in range(n-1):
-        dist = np.linalg.norm(traj[i]-traj[i+1])
-        dist_all += dist
-        #dist_sum += dist
-        if dist_all > seg_dist:
-            dist_all = 0
-            traj_new.append(traj[i])
-            data_new.append(data[i])
-    data_new = np.array(data_new)
-    traj_new = np.array(traj_new)
-    #print("traj dist: ", dist_sum,' m.')
-    return data_new, traj_new
-
-def analyze_results():
-    diffs = np.linalg.norm(maxPositions[:,0:2]-refPositions, axis = 1);
-    diffs[diffs > 5] = 5
-    plt.hist(maxPositions[:,2])
-    #plt.plot(maxPositions[:,2],diffs,'.')
-
 
 def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
     print("load data")
     
     reference, trajectory_r = import_encoder_traj(path_ref_vector[0])
-    print("create tree")
-    tree_ref = KDTree(trajectory_r[:,0:2])
+    #tree_ref = KDTree(trajectory_r[:,0:2])
     for i in range(1,len(path_ref_vector)):
         reference_tmp, trajectory_r_tmp = import_encoder_traj(path_ref_vector[i])
         #print(reference_tmp.shape)
