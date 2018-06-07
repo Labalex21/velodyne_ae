@@ -140,15 +140,15 @@ def create_network(x_input, number_fc, fc_widths):
     print('conv2: ', conv2.get_shape(),weights['wconv2'].get_shape())
 
     # # 3rd convolution
-    # conv3 = conv(conv2, weights['wconv3'], biases['bconv3_enc'],strides)
-    # print('conv3: ', conv3.get_shape(),weights['wconv3'].get_shape())
+    conv3 = conv(conv2, weights['wconv3'], biases['bconv3_enc'],strides)
+    print('conv3: ', conv3.get_shape(),weights['wconv3'].get_shape())
 
     # 4th convolution
     # conv4 = conv(conv3, weights['wconv4'], biases['bconv4_enc'],[1,1,1,1])
     # print('conv4: ', conv4.get_shape(),weights['wconv4'].get_shape())
 
     # 1st fully connected layer
-    fc1 = tf.reshape(conv2, [-1, 16 * 900 * n_features])
+    fc1 = tf.reshape(conv3, [-1, 16 * 900 * n_features])
     # fc1 = tf.reshape(conv3, [-1, 2 * 113 * n_features])
     fc1 = fully_connected(fc1, weights['wfc1'], biases['b1_enc'])
     print('fc1: ', fc1.get_shape())
@@ -164,7 +164,7 @@ def create_network(x_input, number_fc, fc_widths):
 
     # decoder starts here
     # 1st fully connected layer of decoeder
-    # tfc1 = fully_connected(fc3, tf.transpose(weights['wfc3']), biases['b2_dec'])
+    tfc1 = fully_connected(fc3, tf.transpose(weights['wfc3']), biases['b2_dec'])
     # print('tfc1: ', tfc1.get_shape())
 
     # 2nd fully connected layer of decoder
@@ -178,11 +178,11 @@ def create_network(x_input, number_fc, fc_widths):
     print('tfc3: ', tfc3.get_shape())
 
     # 1st transposed convolution
-    # tconv1 = conv_transposed(tfc3, W=weights['wconv4'], output_shape=conv3.get_shape().as_list(), name='tconv1',strides=[1,1,1,1])
+    tconv1 = conv_transposed(tfc3, W=weights['wconv3'], output_shape=conv3.get_shape().as_list(), name='tconv1',strides=strides)
     # print('tconv1: ', tconv1.get_shape())
     #
     # 2nd transposed convolution
-    tconv2 = conv_transposed(tfc3, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv2',strides=strides)
+    tconv2 = conv_transposed(tconv1, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv2',strides=strides)
     print('output: ', tconv2.get_shape())
 
     # 3rd transposed convolution
