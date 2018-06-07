@@ -534,16 +534,16 @@ for i in range(1,fc_array.shape[0]):
     #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
     path_array_ref = [dir_export_20180201, dir_export_20180531]
 
-    # get results
-    cluster_size = 1000
-    sequence_length = 200
-    log_file.write("sequence analysis...\n")
-    log_file.flush()
-    compl, acc = seq.get_results(dir_export_20180410_1, path_array_ref,cluster_size,sequence_length,log_file)
-    log_file.write("Done.\n")
-    log_file.flush()
-    current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
-    log_file.write(current_string)
-    log_file.flush()
-    res_file.write(current_string)
-    res_file.flush()
+   # get results
+    #cluster_size = 1000
+    #sequence_length = 200
+    #log_file.write("sequence analysis...\n")
+    #log_file.flush()
+    #compl, acc = seq.get_results(dir_export_20180410_1, path_array_ref,cluster_size,sequence_length,log_file)
+    #log_file.write("Done.\n")
+    #log_file.flush()
+    #current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    #log_file.write(current_string)
+    #log_file.flush()
+    #res_file.write(current_string)
+    #res_file.flush()
