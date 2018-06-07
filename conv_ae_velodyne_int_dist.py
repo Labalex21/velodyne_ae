@@ -253,20 +253,20 @@ def train():
                           "| El. time: ", "{:.2f}".format(elapsed), "s",
                           "| Batch time: ", "{:.2f}".format(elapsed2), "s")
                 
-                    for i in range(imgs.shape[0]):
-                        img_cv = np.reshape(imgs[i,:,:,0],[900,16,1])*255/40
-                        pred_cv = np.reshape(preds[i,:,:,0],[900,16,1])*255/40
-                        filename_input = dir_test +  str(i) + "_dist_input.png"
-                        filename_output = dir_test +  str(i)  + "_dist_output.png"
-                        cv2.imwrite(filename_input, img_cv)
-                        cv2.imwrite(filename_output, pred_cv)
+                    #for i in range(imgs.shape[0]):
+                        #img_cv = np.reshape(imgs[i,:,:,0],[900,16,1])*255/40
+                        #pred_cv = np.reshape(preds[i,:,:,0],[900,16,1])*255/40
+                        #filename_input = dir_test +  str(i) + "_dist_input.png"
+                        #filename_output = dir_test +  str(i)  + "_dist_output.png"
+                        #cv2.imwrite(filename_input, img_cv)
+                        #cv2.imwrite(filename_output, pred_cv)
                         
-                        img_cv = np.reshape(imgs[i,:,:,1],[900,16,1])*255/40
-                        pred_cv = np.reshape(preds[i,:,:,1],[900,16,1])*255/40
-                        filename_input = dir_test +  str(i) + "_int_input.png"
-                        filename_output = dir_test +  str(i)  + "_int_output.png"
-                        cv2.imwrite(filename_input, img_cv)
-                        cv2.imwrite(filename_output, pred_cv)
+                        #img_cv = np.reshape(imgs[i,:,:,1],[900,16,1])*255/40
+                        #pred_cv = np.reshape(preds[i,:,:,1],[900,16,1])*255/40
+                        #filename_input = dir_test +  str(i) + "_int_input.png"
+                        #filename_output = dir_test +  str(i)  + "_int_output.png"
+                        #cv2.imwrite(filename_input, img_cv)
+                        #cv2.imwrite(filename_output, pred_cv)
             
                     
          
@@ -371,6 +371,23 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 current_string = str(i) + " " + str(filenames[i]) + "\n"
                 log_file.write(current_string)
                 log_file.flush()
+                
+            for j in range(scans.shape[0]):
+                idx = i*20+j
+                filename_input = dir_data + "ae_input/" +  str(idx) + "_dist_input.png"
+                filename_output = dir_data + "ae_pred/" +  str(idx)  + "_dist_output.png"
+                img_cv = np.reshape(scans[i,:,:,0],[900,16,1])*255/40
+                pred_cv = np.reshape(preds[i,:,:,0],[900,16,1])*255
+                cv2.imwrite(filename_input, img_cv)
+                cv2.imwrite(filename_output, pred_cv)
+                
+                filename_input = dir_data + "ae_input/" +  str(idx) + "_int_input.png"
+                filename_output = dir_data + "ae_pred/" +  str(idx)  + "_int_output.png"
+                img_cv = np.reshape(scans[i,:,:,1],[900,16,1])*255/100
+                pred_cv = np.reshape(preds[i,:,:,1],[900,16,1])*255
+                cv2.imwrite(filename_input, img_cv)
+                cv2.imwrite(filename_output, pred_cv)
+                        
             
     if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
         encoder_values = np.delete(encoder_values,np.arange(8100,8620),axis=0)
