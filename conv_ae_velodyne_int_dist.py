@@ -497,7 +497,8 @@ for i in range(1,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    train()
+    if i > 1:
+        train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
