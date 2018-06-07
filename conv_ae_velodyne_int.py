@@ -156,8 +156,8 @@ def create_network(x_input, number_fc, fc_widths):
     encoder = fc1
 
     # 2nd fully connected layer
-    fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
-    print('fc2: ', fc2.get_shape())
+    # fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
+    # print('fc2: ', fc2.get_shape())
 
     # 3rd fully connected layer --> encoder values
     # fc3 = fully_connected(fc2, weights['wfc3'], biases['b3_enc'])
@@ -169,11 +169,11 @@ def create_network(x_input, number_fc, fc_widths):
     # print('tfc1: ', tfc1.get_shape())
 
     # 2nd fully connected layer of decoder
-    tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
+    # tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
     # print('tfc2: ', tfc2.get_shape())
 
     # 3rd and last fully connected layer of decoder
-    tfc3 = fully_connected(tfc2, tf.transpose(weights['wfc1']), biases['b3_dec'])
+    tfc3 = fully_connected(fc1, tf.transpose(weights['wfc1']), biases['b3_dec'])
     tfc3 = tf.reshape(tfc3, [-1,900, 16, n_features])
     # tfc3 = tf.reshape(tfc3, [-1,2 , 113, n_features])
     print('tfc3: ', tfc3.get_shape())
