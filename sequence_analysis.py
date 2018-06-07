@@ -76,9 +76,11 @@ def interpolate_labels(traj, labels, label_dist = 0.3):
     return np.array(new_traj), np.array(new_labels)
 
 
-def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
+def get_results(path_online, path_ref_vector, cluster_size, sequence_length, log_file):
     print("load data")
-    
+    current_string = "load data" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     reference, trajectory_r = import_encoder_traj(path_ref_vector[0])
     #tree_ref = KDTree(trajectory_r[:,0:2])
     for i in range(1,len(path_ref_vector)):
@@ -90,15 +92,21 @@ def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
         trajectory_r = np.concatenate((trajectory_r,trajectory_r_tmp), axis=0)
     features, trajectory_f = import_encoder_traj(path_online)
     
-    print("sample data")
+    current_string = "Sample data" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     trajectory_r, reference  = interpolate_labels(trajectory_r,reference,0.3)
     trajectory_f, features = interpolate_labels(trajectory_f,features,0.3)
     
-    print("kmeans")
+    current_string = "kmeans" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     kmeans = KMeans(n_clusters=cluster_size).fit(reference)    
     labels = kmeans.labels_
     
-    print("kd-tree")
+    current_string = "kd-tree" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     tree = KDTree(trajectory_r[:,0:2])
     traj_distances = tree.query_radius(trajectory_f[:,0:2],r = 5.,count_only=True)
 
@@ -114,14 +122,18 @@ def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
     refPositions = np.zeros([check_points,2])
     maxPositions = np.zeros([check_points,3])
     
-    print("sequence analysis")
+    current_string = "sequence analysis" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     delete_rows = 0
     for i in range(0,check_points):
         end = int(features.shape[0]/check_points)*i
         start = end-sequence_length
         
-        if i%500 == 0 and i != 0:
-            print(i,"/",check_points)
+        if i%100 == 0 and i != 0:
+            current_string = str(i) + " " + str(check_points) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
         
         # check if last n (sequence length) positions are available
         if start < 0:
@@ -160,6 +172,9 @@ def get_results(path_online, path_ref_vector, cluster_size, sequence_length):
     check_points = distances.shape[0]
     
     # Evaluation
+    current_string = "Evaluation" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     correct_positions = 0
     usable_positions = 0
     good_or_bad = np.zeros(distances.shape[0])
