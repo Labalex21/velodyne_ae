@@ -91,6 +91,8 @@ def get_results(path_online, path_ref_vector, cluster_size, sequence_length, log
         reference = np.concatenate((reference,reference_tmp), axis=0)
         trajectory_r = np.concatenate((trajectory_r,trajectory_r_tmp), axis=0)
     features, trajectory_f = import_encoder_traj(path_online)
+    trajectory_f = trajectory_f[350:trajectory_f.shape[0]-750,:]
+    features = features[350:features.shape[0]-750,:]
     
     current_string = "Sample data" + "\n"
     log_file.write(current_string)
