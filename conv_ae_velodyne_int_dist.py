@@ -374,22 +374,26 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 current_string = str(i) + " " + str(filenames[i]) + "\n"
                 log_file.write(current_string)
                 log_file.flush()
-                
-            for j in range(scans.shape[0]):
-                idx = i*20+j
-                filename_input = dir_data + "ae_input/" +  str(idx) + "_dist_input.png"
-                filename_output = dir_data + "ae_pred/" +  str(idx)  + "_dist_output.png"
-                img_cv = np.reshape(scans[j,:,:,0],[900,16,1])*255/40
-                pred_cv = np.reshape(preds[j,:,:,0],[900,16,1])*255
-                cv2.imwrite(filename_input, img_cv)
-                cv2.imwrite(filename_output, pred_cv)
-                
-                filename_input = dir_data + "ae_input/" +  str(idx) + "_int_input.png"
-                filename_output = dir_data + "ae_pred/" +  str(idx)  + "_int_output.png"
-                img_cv = np.reshape(scans[j,:,:,1],[900,16,1])*255/100
-                pred_cv = np.reshape(preds[j,:,:,1],[900,16,1])*255
-                cv2.imwrite(filename_input, img_cv)
-                cv2.imwrite(filename_output, pred_cv)
+             
+            if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
+                for j in range(scans.shape[0]):
+                    idx = i*20+j
+                    current_string = "image " + str(idx) + "\n"
+                    log_file.write(current_string)
+                    log_file.flush()
+                    filename_input = dir_data + "ae_input/" +  str(idx) + "_dist_input.png"
+                    filename_output = dir_data + "ae_pred/" +  str(idx)  + "_dist_output.png"
+                    img_cv = np.reshape(scans[j,:,:,0],[900,16,1])*255/40
+                    pred_cv = np.reshape(preds[j,:,:,0],[900,16,1])*255
+                    cv2.imwrite(filename_input, img_cv)
+                    cv2.imwrite(filename_output, pred_cv)
+
+                    filename_input = dir_data + "ae_input/" +  str(idx) + "_int_input.png"
+                    filename_output = dir_data + "ae_pred/" +  str(idx)  + "_int_output.png"
+                    img_cv = np.reshape(scans[j,:,:,1],[900,16,1])*255/100
+                    pred_cv = np.reshape(preds[j,:,:,1],[900,16,1])*255
+                    cv2.imwrite(filename_input, img_cv)
+                    cv2.imwrite(filename_output, pred_cv)
                         
             
     if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
