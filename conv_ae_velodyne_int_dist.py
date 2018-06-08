@@ -363,9 +363,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
             scans = np.load(filenames[i])
             
             values = sess.run([fc], feed_dict={x: scans})
+            values = np.array(values)
             start_idx = i*scans_per_run
             end_idx = start_idx + scans_per_run
-            encoder_values[start_idx:end_idx, :] = np.array(values)
+            encoder_values[start_idx:end_idx, :] = values
             
             if i % 200 is 0:
                 current_string = str(i) + " " + str(filenames[i]) + "\n"
@@ -377,9 +378,6 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 filename_input = dir_data + "ae_input/" +  str(idx) + "_dist_input.png"
                 filename_output = dir_data + "ae_pred/" +  str(idx)  + "_dist_output.png"
                 img_cv = np.reshape(scans[j,:,:,0],[900,16,1])*255/40
-                current_string = str(values.shape) + "\n"
-                log_file.write(current_string)
-                log_file.flush()
                 pred_cv = np.reshape(values[j,:,:,0],[900,16,1])*255
                 cv2.imwrite(filename_input, img_cv)
                 cv2.imwrite(filename_output, pred_cv)
