@@ -15,7 +15,7 @@ import json
 from activations import lrelu # leaky rectified linear activation function
 
 last_encoder_width = 500
-number_of_conv = 4
+number_of_conv = 3
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae_simple/"
@@ -435,7 +435,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,1,1,1,1])
+fc_array = np.array([2,2,2,2,2,2])
 fc_size_array = np.array([[800,400,50],
                  [400,200,50],
                  [200,100,50],
