@@ -376,15 +376,15 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 idx = i*20+j
                 filename_input = dir_data + "ae_input/" +  str(idx) + "_dist_input.png"
                 filename_output = dir_data + "ae_pred/" +  str(idx)  + "_dist_output.png"
-                img_cv = np.reshape(scans[i,:,:,0],[900,16,1])*255/40
-                pred_cv = np.reshape(values[i,:,:,0],[900,16,1])*255
+                img_cv = np.reshape(scans[j,:,:,0],[900,16,1])*255/40
+                pred_cv = np.reshape(values[j,:,:,0],[900,16,1])*255
                 cv2.imwrite(filename_input, img_cv)
                 cv2.imwrite(filename_output, pred_cv)
                 
                 filename_input = dir_data + "ae_input/" +  str(idx) + "_int_input.png"
                 filename_output = dir_data + "ae_pred/" +  str(idx)  + "_int_output.png"
-                img_cv = np.reshape(scans[i,:,:,1],[900,16,1])*255/100
-                pred_cv = np.reshape(values[i,:,:,1],[900,16,1])*255
+                img_cv = np.reshape(scans[j,:,:,1],[900,16,1])*255/100
+                pred_cv = np.reshape(values[j,:,:,1],[900,16,1])*255
                 cv2.imwrite(filename_input, img_cv)
                 cv2.imwrite(filename_output, pred_cv)
                         
