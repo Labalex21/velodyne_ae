@@ -129,7 +129,7 @@ def create_network(x_input, number_fc, fc_widths):
     x = tf.reshape(x_input, [tf.shape(x_input)[0], 900, 16, 2], name='reshape_image1')
     x = tf.to_float(x)
     x_dist = x[:,:,:,0]/40.0
-    x_int = x[:,:,:,0]/100.0
+    x_int = x[:,:,:,1]/100.0
     x_dist = tf.reshape(x_dist, [tf.shape(x_dist)[0], 900, 16, 1])
     x_int = tf.reshape(x_int, [tf.shape(x_int)[0], 900, 16, 1])
     x = tf.concat([x_dist, x_int], 3)
@@ -514,8 +514,7 @@ for i in range(1,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    if i > 1:
-        train()
+    train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
