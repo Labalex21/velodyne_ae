@@ -15,7 +15,7 @@ import json
 from activations import lrelu # leaky rectified linear activation function
 
 last_encoder_width = 500
-number_of_conv = 2
+number_of_conv = 3
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
 dir_test = "../data/20180201/imgs/result_ae_di3/"
@@ -141,23 +141,23 @@ def create_network(x_input, number_fc, fc_widths):
     print('conv2: ', conv2.get_shape(),weights['wconv2'].get_shape())
 
     # # 3rd convolution
-    # conv3 = conv(conv2, weights['wconv3'], biases['bconv3_enc'],strides)
-    # print('conv3: ', conv3.get_shape(),weights['wconv3'].get_shape())
+    conv3 = conv(conv2, weights['wconv3'], biases['bconv3_enc'],strides)
+    print('conv3: ', conv3.get_shape(),weights['wconv3'].get_shape())
 
     # 4th convolution
     # conv4 = conv(conv3, weights['wconv4'], biases['bconv4_enc'],[1,1,1,1])
     # print('conv4: ', conv4.get_shape(),weights['wconv4'].get_shape())
 
     # 1st fully connected layer
-    fc1 = tf.reshape(conv2, [-1, 16 * 900 * n_features])
+    fc1 = tf.reshape(conv3, [-1, 16 * 900 * n_features])
     # fc1 = tf.reshape(conv3, [-1, 2 * 113 * n_features])
     fc1 = fully_connected(fc1, weights['wfc1'], biases['b1_enc'])
     print('fc1: ', fc1.get_shape())
     encoder = fc1
 
     # 2nd fully connected layer
-    # fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
-    # print('fc2: ', fc2.get_shape())
+    fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
+    print('fc2: ', fc2.get_shape())
 
     # 3rd fully connected layer --> encoder values
     # fc3 = fully_connected(fc2, weights['wfc3'], biases['b3_enc'])
@@ -169,21 +169,21 @@ def create_network(x_input, number_fc, fc_widths):
     # print('tfc1: ', tfc1.get_shape())
 
     # 2nd fully connected layer of decoder
-    # tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
-    # print('tfc2: ', tfc2.get_shape())
+    tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
+    print('tfc2: ', tfc2.get_shape())
 
     # 3rd and last fully connected layer of decoder
-    tfc3 = fully_connected(fc1, tf.transpose(weights['wfc1']), biases['b3_dec'])
+    tfc3 = fully_connected(tfc2, tf.transpose(weights['wfc1']), biases['b3_dec'])
     tfc3 = tf.reshape(tfc3, [-1,900, 16, n_features])
     # tfc3 = tf.reshape(tfc3, [-1,2 , 113, n_features])
     print('tfc3: ', tfc3.get_shape())
 
     # 1st transposed convolution
-    # tconv1 = conv_transposed(tfc3, W=weights['wconv4'], output_shape=conv3.get_shape().as_list(), name='tconv1',strides=[1,1,1,1])
-    # print('tconv1: ', tconv1.get_shape())
+    tconv1 = conv_transposed(tfc3, W=weights['wconv4'], output_shape=conv3.get_shape().as_list(), name='tconv1',strides=[1,1,1,1])
+    print('tconv1: ', tconv1.get_shape())
     #
     # 2nd transposed convolution
-    tconv2 = conv_transposed(tfc3, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv2',strides=strides)
+    tconv2 = conv_transposed(tconv1, W=weights['wconv2'], output_shape=conv1.get_shape().as_list(), name='tconv2',strides=strides)
     print('tconv2: ', tconv2.get_shape())
 
     # 3rd transposed convolution
@@ -425,7 +425,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,1,1,1,1])
+fc_array = np.array([2,2,2,2,2,2])
 fc_size_array = np.array([[800,400,50],
                  [400,200,50],
                  [200,100,50],
@@ -437,7 +437,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(2,fc_array.shape[0]):
+for i in range(1,fc_array.shape[0]):
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
