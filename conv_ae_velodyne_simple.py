@@ -152,10 +152,11 @@ def create_network(x_input, number_fc, fc_widths):
     # fc1 = tf.reshape(conv3, [-1, 2 * 113 * n_features])
     fc1 = fully_connected(fc1, weights['wfc1'], biases['b1_enc'])
     print('fc1: ', fc1.get_shape())
-    encoder = fc1
+    
 
     # 2nd fully connected layer
     fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
+    encoder = fc2
     print('fc2: ', fc2.get_shape())
 
     # 3rd fully connected layer --> encoder values
@@ -485,7 +486,8 @@ for i in range(1,fc_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    train()
+    if i > 1:
+        train()
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
