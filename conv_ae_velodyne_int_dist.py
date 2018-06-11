@@ -450,11 +450,11 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
 
 fc_array = np.array([2,2,2,2,2,2])
 fc_size_array = np.array([[800,100,50],
-                 [400,100,50],
+                 [400,200,50],
                  [200,100,50],
-                 [100,100,50],
-                 [50,100,50],
-                 [20,100,50]])
+                 [100,50,50],
+                 [50,25,50],
+                 [20,10,50]])
   
 current_string = "before loop\n"
 log_file.write(current_string)
