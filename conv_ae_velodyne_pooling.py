@@ -18,17 +18,17 @@ last_encoder_width = 500
 number_of_conv = 2
 fcs = np.array([last_encoder_width*2,last_encoder_width])
 
-dir_test = "../data/20180201/imgs/result_ae_pooling/"
+dir_test = "../data/20180201/imgs/result_ae_simple/"
 dir_data = "../data/imgs/"
-dir_records = "../data/20180201/records_int/"
+dir_records = "../data/20180531/records/"
 
 # log file
-log_filename = "../data/logs/log_ae_pooling_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+log_filename = "../data/logs/log_ae_simple_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
 
-res_filename = "../data/results/ae_pooling_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+res_filename = "../data/results/ae_simple_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
 res_file = open(res_filename,"w")
 
 # input data parameters
@@ -36,7 +36,7 @@ epochs = 20
 batch_size = 20
 
 # images parameters
-max_dist = 40
+max_dist = 40.0
 height = 900
 width = 16
 image_shape = [height,width,2]
@@ -45,7 +45,7 @@ label_shape = image_shape
 # network parameters
 learning_rate = 0.002
 
-n_features = 16
+n_features = 32
 patch_size = 3
 strides = [1, 1, 1, 1]
 
@@ -103,13 +103,13 @@ def create_network(x_input, number_fc, fc_widths):
     log_file.flush()
     
     n_hidden_1 = int(fc_widths[0])
-    n_hidden_2 = int(fc_widths[1])
+    n_hidden_2 = int(fc_widths[0]/2)
     n_hidden_3 = int(fc_widths[2])
-    weights = {'wconv1': weight_variable(2, n_features, patch_size, name='w_conv1_w1'),
-               'wconv2': weight_variable(n_features, n_features*2, patch_size, name='w_conv1_w2'),
+    weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
+               'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
                'wconv3': weight_variable(n_features, n_features, patch_size, name='w_conv1_w3'),
                'wconv4': weight_variable(n_features, n_features, patch_size, name='w_conv1_w4'),
-               'wfc1': tf.Variable(xavier_init(225 * 4 * n_features*2, n_hidden_1), name='w_fc1'),
+               'wfc1': tf.Variable(xavier_init(16 * 900 * n_features, n_hidden_1), name='w_fc1'),
                'wfc2': tf.Variable(xavier_init(n_hidden_1, n_hidden_2), name='w_fc2'),
                'wfc3': tf.Variable(xavier_init(n_hidden_2, n_hidden_3), name='w_fc3')
                }
@@ -118,21 +118,20 @@ def create_network(x_input, number_fc, fc_widths):
               'b2_enc': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='encoder_b2'),
               'b3_enc': tf.Variable(tf.zeros([n_hidden_3], dtype=tf.float32), name='encoder_b3'),
               'bconv1_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b1'),
-              'bconv2_enc': tf.Variable(tf.zeros([n_features*2], dtype=tf.float32), name='encoder_conv1_b2'),
+              'bconv2_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b2'),
               'bconv3_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b3'),
               'bconv4_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b4'),
               'b1_dec': tf.Variable(tf.zeros([n_hidden_1], dtype=tf.float32), name='decoder_b1'),
               'b2_dec': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='decoder_b2') ,
-              'b3_dec': tf.Variable(tf.zeros([4 * 225 * n_features*2], dtype=tf.float32), name='decoder_b3')}
+              'b3_dec': tf.Variable(tf.zeros([16 * 900 * n_features], dtype=tf.float32), name='decoder_b3')}
               # 'b3_dec': tf.Variable(tf.zeros([2 * 113 * n_features], dtype=tf.float32), name='decoder_b3')}
     
-    x = tf.reshape(x_input, [tf.shape(x_input)[0], 900, 16, 2], name='reshape_image1')
+    x = tf.reshape(x_input[:,:,:,0], [tf.shape(x_input)[0], 900, 16, 1], name='reshape_image1')
     x = tf.to_float(x) #hard code
+    x = x/max_dist
     print('input: ', x.get_shape())
-    # Add print operation
-    x = tf.Print(x, [x], message="This is x: ")
 
-    # 1st convolution
+     # 1st convolution
     conv1 = conv(x, weights['wconv1'], biases['bconv1_enc'],strides)
     print('conv1: ', conv1.get_shape(),weights['wconv1'].get_shape())
     maxPool1 = tflearn.layers.conv.max_pool_2d (conv1, 2, padding='same')
@@ -236,13 +235,11 @@ def train():
             log_file.flush()
             for i in range(total_batch):
                 start2 = time.time()
-
                 _,current_loss,imgs,preds = sess.run([optimizer, loss,x, output])
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
-
-                if i % 100 == 0:
+                if i % 200 == 0:
                     current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + "\n"
                     log_file.write(current_string)
                     log_file.flush()
@@ -252,23 +249,15 @@ def train():
                           "| current los:",current_loss,
                           "| El. time: ", "{:.2f}".format(elapsed), "s",
                           "| Batch time: ", "{:.2f}".format(elapsed2), "s")
-                
-                    for i in range(imgs.shape[0]):
-                        img_cv = np.reshape(imgs[i,:,:,0],[900,16,1])*255/40
-                        pred_cv = np.reshape(preds[i,:,:,0],[900,16,1])*255/40
-                        filename_input = dir_test +  str(i) + "_dist_input.png"
-                        filename_output = dir_test +  str(i)  + "_dist_output.png"
-                        cv2.imwrite(filename_input, img_cv)
-                        cv2.imwrite(filename_output, pred_cv)
-                        
-                        img_cv = np.reshape(imgs[i,:,:,1],[900,16,1])*255/40
-                        pred_cv = np.reshape(preds[i,:,:,1],[900,16,1])*255/40
-                        filename_input = dir_test +  str(i) + "_int_input.png"
-                        filename_output = dir_test +  str(i)  + "_int_output.png"
-                        cv2.imwrite(filename_input, img_cv)
-                        cv2.imwrite(filename_output, pred_cv)
-            
                     
+                    #for i in range(imgs.shape[0]):
+                        #img_cv = np.reshape(imgs[i],[900,16,1])*255/40
+                        #pred_cv = np.reshape(preds[i],[900,16,1])*255/40
+                        #filename_input = dir_test +  str(i) + "_input.png"
+                        #filename_output = dir_test +  str(i)  + "_output.png"
+                        #cv2.imwrite(filename_input, img_cv)
+                        #cv2.imwrite(filename_output, pred_cv)
+                            
          
         coord.request_stop()
         coord.join(threads)
@@ -281,6 +270,7 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     # get trajectory
     traj = fh.get_scan_trajectory(path_current_traj)
     
+    
     # get all images
     filenames = fh.files_in_folder(path_data)
     current_string = str(filenames.shape[0]) + " files\n"
@@ -290,7 +280,8 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
-    if number_of_scans % 100 == 0:
+    scans_per_run = 20
+    if number_of_scans % scans_per_run == 0:
         k = 0
     
     # get feature values
@@ -298,27 +289,25 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
     with tf.Session()  as sess:
         #load model
         saver.restore(sess, path_model)
-        
-        for i in range(int(number_of_scans / 100) + k):
-            start_idx = i * 100
-            end_idx = start_idx + 100
+        for i in range(int(number_of_scans / scans_per_run) + k):
+            start_idx = i * scans_per_run
+            end_idx = start_idx + scans_per_run
             if end_idx > number_of_scans:
                 end_idx = number_of_scans
     
             imgs = []
             for j in range(start_idx,end_idx):
-                img_int,img_dist = fh.get_velodyne_img(filenames[j])
-                img_int = img_int[:,:,0]
-                img_int = np.reshape(img_int,[img_int.shape[0],img_int.shape[1],1])
-                img_dist = img_dist[:,:,0]
-                img_dist = np.reshape(img_dist,[img_dist.shape[0],img_dist.shape[1],1])
-                img = np.concatenate((img_dist,img_int),axis=2)
+                img,_ = fh.get_velodyne_img(filenames[j])
+                img = img[:,:,0].transpose()
+                img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            current_string = str(j) + " " + str(filenames[j]) + "\n"
-            log_file.write(current_string)
-            log_file.flush()
             values = sess.run([fc], feed_dict={x: imgs})
+            
+            if i % 1000 is 0:
+                current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
@@ -334,7 +323,68 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
                 #string_pred = dir_pred + "img_" + str(j+start_idx) + ".png"
                 #cv2.imwrite(string_img, imgs[j]*255)
                 #cv2.imwrite(string_pred, pred[j]*255)
-                
+
+def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_width):
+    # get trajectory
+    traj = fh.get_scan_trajectory_csv(path_current_traj)
+    
+    # get all images
+    filenames = fh.files_in_folder(path_data)
+    current_string = str(filenames.shape[0]) + " files\n"
+    log_file.write(current_string)
+    scans = np.load(filenames[0])
+    scans_per_run = scans.shape[0]
+    number_of_scans = (filenames.shape[0]-1)*scans_per_run
+    traj = traj[0:number_of_scans,:]
+    
+    # save feature values here
+    encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
+    k = 1
+    
+    if number_of_scans % scans_per_run == 0:
+        k = 0
+    
+    # get feature values
+    saver = tf.train.Saver()
+    with tf.Session()  as sess:
+        #load model
+        saver.restore(sess, path_model)
+        for i in range(filenames.shape[0]-1):
+            scans = np.load(filenames[i])
+            scans = np.reshape(scans[:,:,:,0],[scans.shape[0],scans.shape[1],scans.shape[2],1])
+            
+            values = sess.run([fc], feed_dict={x: scans})
+            start_idx = i*scans_per_run
+            end_idx = start_idx + scans_per_run
+            encoder_values[start_idx:end_idx, :] = np.array(values)
+            
+            if i % 200 is 0:
+                current_string = str(i) + " " + str(filenames[i]) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
+    
+    if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
+        encoder_values = np.delete(encoder_values,np.arange(8100,8620),axis=0)
+        traj = np.delete(traj,np.arange(8100,8620),axis=0)
+        
+    if path_current_traj == '../data/traj/scan_traj_20180201_1.txt':
+        encoder_values = np.delete(encoder_values,np.arange(23200,23800),axis=0)
+        traj = np.delete(traj,np.arange(23200,23800),axis=0)
+        
+    if path_current_traj == '../data/traj/scan_traj_20180531_2.txt':
+        encoder_values1 = encoder_values[800:3500]
+        encoder_values2 = encoder_values[21000:36500]
+        encoder_values = np.concatenate((encoder_values1,encoder_values2),axis=0)
+        traj1 = traj[800:3500]
+        traj2 = traj[21000:36500]
+        traj = np.concatenate((traj1,traj2),axis=0)
+    
+    # export values to json file
+    with open(path_export, 'w') as f:
+        json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+        
+    
+        
 def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_width):
     # get trajectory
     traj = fh.get_scan_trajectory_csv(path_current_traj)
@@ -352,7 +402,7 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
-    scans_per_run = 1
+    scans_per_run = 20
     if number_of_scans % scans_per_run == 0:
         k = 0
         
@@ -360,6 +410,9 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     saver = tf.train.Saver()
     with tf.Session()  as sess:
         #load model
+        current_string = "Load model" + path_model + " \n"
+        log_file.write(current_string)
+        log_file.flush()
         saver.restore(sess, path_model)
         
         for i in range(int(number_of_scans / scans_per_run) + k):
@@ -370,18 +423,16 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     
             imgs = []
             for j in range(start_idx,end_idx):
-                img_int,img_dist = fh.get_velodyne_img_csv(filenames[j])
-                img_int = np.reshape(img_int,[img_int.shape[0],img_int.shape[1],1])
-                img_dist = np.reshape(img_dist,[img_dist.shape[0],img_dist.shape[1],1])
-                img = np.concatenate((img_dist,img_int),axis=2)
+                idx = int(traj[j,0])
+                img,_ = fh.get_velodyne_img_csv(filenames[idx])
+                img = img.transpose()
+                img = np.reshape(img,[img.shape[0],img.shape[1],1])
                 imgs.append(img)
             imgs = np.array(imgs)
-            print(imgs.shape)
+            values = sess.run([fc], feed_dict={x: imgs})
             current_string = str(start_idx) + "-" + str(j) + " " + str(filenames[start_idx]) + "\n"
             log_file.write(current_string)
             log_file.flush()
-            print(current_string)
-            values = sess.run([fc], feed_dict={x: imgs})
             values = np.array(values)
             encoder_values[start_idx:end_idx, :] = values
             
@@ -390,25 +441,26 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([1,1,2,2,3,3])
-fc_size_array = np.array([[800,100,50],
-                 [400,100,50],
+fc_array = np.array([1,1,1,1,1,1])
+fc_size_array = np.array([[800,400,50],
+                 [400,200,50],
                  [200,100,50],
-                 [100,100,50],
-                 [50,100,50],
-                 [20,100,50]])
+                 [100,50,50],
+                 [50,25,50],
+                 [20,10,50]])
   
 current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
 for i in range(1,fc_array.shape[0]):
+    
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
     number_of_fc = fc_array[i]
-    path_model = "../data/20180201/models/conv_ae_velodyne_pooling_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
-#    dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
+    path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    #dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     last_encoder_width = fc_size_array[i,number_of_fc-1]
     
     current_string = "reset graph\n"
@@ -419,8 +471,7 @@ for i in range(1,fc_array.shape[0]):
     current_string = "read record\n"
     log_file.write(current_string)
     log_file.flush()    
-    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000)
-    x_orig = x
+    x, number_batches = fh.read_tfrecord(dir_records, image_shape, batch_size = batch_size,num_epochs=2000*100000)
     print("number_batches: ",number_batches)
     current_string = "Number batches: " + str(number_batches) + "\n"
     log_file.write(current_string)
@@ -436,49 +487,58 @@ for i in range(1,fc_array.shape[0]):
 
     # optimizer
     optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
+    
     current_string = "train" + "\n"
     log_file.write(current_string)
     log_file.flush()
     #train
     train()
+    
     current_string = "Export" + "\n"
     log_file.write(current_string)
     log_file.flush()
-    # export encoder    
-    path_traj = '../data/traj/scan_traj_20180201.txt'
-    dir_export_20180201 = '../data/features/velodyne_20180201_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180201/scans_csv/'
-    export_encoder_csv(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    
+    # export encoder
+    path_traj = '../data/traj/scan_traj_20180201_1.txt'
+    dir_export_20180201 = '../data/features/velodyne_20180201_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180201/scans_npy_1/'
+    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    
+    path_traj = '../data/traj/scan_traj_20180531_2.txt'
+    dir_export_20180531 = '../data/features/velodyne_20180531_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    #dir_data = '../data/20180201/scans_utm_2/'
+    dir_data = '../data/20180531/scans_npy_2/'
+    export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
-    dir_export_20180410_2 = '../data/features/velodyne_20180410_2_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data = '../data/20180410/scans_rot_2/'
-    export_encoder(dir_data, dir_export_20180410_2, path_traj, last_encoder_width)
+    dir_export_20180410_1 = '../data/features/velodyne_20180410_2_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_data = '../data/20180410/scans_npy_2/'
+    export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
-    dir_export_icsens = '../data/features/velodyne_icsens_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_icsens = '../data/features/velodyne_icsens_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_icsens = "../data/20180201/scans_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
     #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
     #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
 
    
     #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
-    path_array_ref = [dir_export_20180201]
+    path_array_ref = [dir_export_20180201, dir_export_20180531]
 
-    # get results
-    cluster_size = 100
-    sequence_length = 200
-    log_file.write("sequence analysis...\n")
-    log_file.flush()
-    compl, acc = seq.get_results(dir_export_20180201, path_array_ref,cluster_size,sequence_length)
-    log_file.write("Done.\n")
-    log_file.flush()
-    current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
-    log_file.write(current_string)
-    log_file.flush()
-    res_file.write(current_string)
-    res_file.flush()
+   # get results
+    #cluster_size = 1000
+    #sequence_length = 200
+    #log_file.write("sequence analysis...\n")
+    #log_file.flush()
+    #compl, acc = seq.get_results(dir_export_20180410_1, path_array_ref,cluster_size,sequence_length,log_file)
+    #log_file.write("Done.\n")
+    #log_file.flush()
+    #current_string = "simple features: " + str(n_features) + " patch size" + str(patch_size) + " " + str(fc_size_array[i,0]) + " " + str(fc_size_array[i,1]) + " " + str(fc_size_array[i,2]) + " " + str(fc_array[i]) + " " + str(number_of_conv) + " completeness: " + str(compl) + " | RMSE: " + str(acc) + "\n"
+    #log_file.write(current_string)
+    #log_file.flush()
+    #res_file.write(current_string)
+    #res_file.flush()
