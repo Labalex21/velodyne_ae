@@ -193,10 +193,10 @@ def create_network(x_input, number_fc, fc_widths):
     print('tconv2: ', tconv2.get_shape())
 
     # 3rd transposed convolution
-    #upsample3 = tflearn.upsample_2d(tconv2,2)
-    #print('upsample3: ', upsample3.get_shape())
+    upsample3 = tflearn.upsample_2d(tconv2,2)
+    print('upsample3: ', upsample3.get_shape())
 
-    tconv3 = conv_transposed(tconv2, W=weights['wconv1'], output_shape=x.get_shape().as_list(), name='tconv3',strides=[1,1,1,1])
+    tconv3 = conv_transposed(upsample3, W=weights['wconv1'], output_shape=x.get_shape().as_list(), name='tconv3',strides=[1,1,1,1])
     output = tconv3
     print('output: ', tconv3.get_shape())
 
