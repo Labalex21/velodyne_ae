@@ -515,17 +515,27 @@ for i in range(patches_array.shape[0]):
     export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '.json'
-    dir_data_icsens = "../data/20180201/scans_icsens/"
+    dir_data_icsens = "../data/20180201/scans_npy_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
-    #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
+    #export_encoder_npy(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
     dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '.json'
-    dir_data_herrenhausen = "../data/20180206/scans/"
+    dir_data_herrenhausen = "../data/20180206/scans_npy/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    #export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    
+    dir_export_leinhausen = '../data/features/velodyne_leinhausen_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '.json'
+    dir_data_leinhausen = "../data/20180503/scans_npy/"
+    path_traj_leinhausen = '../data/traj/scan_traj_20180503.txt'
+    #export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    
+    dir_export_stoecken = '../data/features/velodyne_stoecken_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '.json'
+    dir_data_stoecken = "../data/20180509/scans_npy/"
+    path_traj_stoecken = '../data/traj/scan_traj_20180509.txt'
+    #export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
 
    
-    #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
+    #path_array_ref = [dir_export_20180201, dir_export_20180531, dir_data_icsens, dir_data_herrenhausen, dir_export_leinhausen, dir_export_stoecken]
     path_array_ref = [dir_export_20180201, dir_export_20180531]
 
    # get results
