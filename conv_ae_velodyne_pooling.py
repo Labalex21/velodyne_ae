@@ -106,10 +106,10 @@ def create_network(x_input, number_fc, fc_widths):
     n_hidden_2 = int(fc_widths[0]/2)
     n_hidden_3 = int(fc_widths[2])
     weights = {'wconv1': weight_variable(1, n_features, patch_size, name='w_conv1_w1'),
-               'wconv2': weight_variable(n_features, n_features, patch_size, name='w_conv1_w2'),
+               'wconv2': weight_variable(n_features, n_features*2, patch_size, name='w_conv1_w2'),
                'wconv3': weight_variable(n_features, n_features, patch_size, name='w_conv1_w3'),
                'wconv4': weight_variable(n_features, n_features, patch_size, name='w_conv1_w4'),
-               'wfc1': tf.Variable(xavier_init(16 * 900 * n_features, n_hidden_1), name='w_fc1'),
+               'wfc1': tf.Variable(xavier_init(int(16/4) * int(900/4) * n_features*2, n_hidden_1), name='w_fc1'),
                'wfc2': tf.Variable(xavier_init(n_hidden_1, n_hidden_2), name='w_fc2'),
                'wfc3': tf.Variable(xavier_init(n_hidden_2, n_hidden_3), name='w_fc3')
                }
@@ -118,12 +118,12 @@ def create_network(x_input, number_fc, fc_widths):
               'b2_enc': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='encoder_b2'),
               'b3_enc': tf.Variable(tf.zeros([n_hidden_3], dtype=tf.float32), name='encoder_b3'),
               'bconv1_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b1'),
-              'bconv2_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b2'),
+              'bconv2_enc': tf.Variable(tf.zeros([n_features*2], dtype=tf.float32), name='encoder_conv1_b2'),
               'bconv3_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b3'),
               'bconv4_enc': tf.Variable(tf.zeros([n_features], dtype=tf.float32), name='encoder_conv1_b4'),
               'b1_dec': tf.Variable(tf.zeros([n_hidden_1], dtype=tf.float32), name='decoder_b1'),
               'b2_dec': tf.Variable(tf.zeros([n_hidden_2], dtype=tf.float32), name='decoder_b2') ,
-              'b3_dec': tf.Variable(tf.zeros([16 * 900 * n_features], dtype=tf.float32), name='decoder_b3')}
+              'b3_dec': tf.Variable(tf.zeros([int(16/4) * int(900/4) * n_features*2], dtype=tf.float32), name='decoder_b3')}
               # 'b3_dec': tf.Variable(tf.zeros([2 * 113 * n_features], dtype=tf.float32), name='decoder_b3')}
     
     x = tf.reshape(x_input[:,:,:,0], [tf.shape(x_input)[0], 900, 16, 1], name='reshape_image1')
@@ -133,13 +133,13 @@ def create_network(x_input, number_fc, fc_widths):
 
      # 1st convolution
     conv1 = conv(x, weights['wconv1'], biases['bconv1_enc'],strides)
-    print('conv1: ', conv1.get_shape(),weights['wconv1'].get_shape())
+    print('conv1: ', conv1.get_shape())
     maxPool1 = tflearn.layers.conv.max_pool_2d (conv1, 2, padding='same')
     print('mPool1:', maxPool1.get_shape())
 
     # 2nd convolution
     conv2 = conv(maxPool1, weights['wconv2'], biases['bconv2_enc'],strides)
-    print('conv2: ', conv2.get_shape(),weights['wconv2'].get_shape())
+    print('conv2: ', conv2.get_shape())
     maxPool2 = tflearn.layers.conv.max_pool_2d (conv2, 2, padding='same')
     print('mPool2:', maxPool2.get_shape())
 
@@ -153,6 +153,7 @@ def create_network(x_input, number_fc, fc_widths):
 
     # 1st fully connected layer
     fc1 = tf.reshape(maxPool2, [-1, 4 * 225 * n_features*2])
+    print('fc1: ', fc1.get_shape())
     # fc1 = tf.reshape(conv3, [-1, 2 * 113 * n_features])
     fc1 = fully_connected(fc1, weights['wfc1'], biases['b1_enc'])
     print('fc1: ', fc1.get_shape())
@@ -187,12 +188,15 @@ def create_network(x_input, number_fc, fc_widths):
     #
     # 2nd transposed convolution
     upsample2 = tflearn.upsample_2d(tfc3,2)
+    print('upsample2: ', upsample2.get_shape())
     tconv2 = conv_transposed(upsample2, W=weights['wconv2'], output_shape=maxPool1.get_shape().as_list(), name='tconv2',strides=[1,1,1,1])
     print('tconv2: ', tconv2.get_shape())
 
     # 3rd transposed convolution
-    upsample3 = tflearn.upsample_2d(tconv2,2)
-    tconv3 = conv_transposed(upsample3, W=weights['wconv1'], output_shape=x.get_shape().as_list(), name='tconv3',strides=[1,1,1,1])
+    #upsample3 = tflearn.upsample_2d(tconv2,2)
+    #print('upsample3: ', upsample3.get_shape())
+
+    tconv3 = conv_transposed(tconv2, W=weights['wconv1'], output_shape=x.get_shape().as_list(), name='tconv3',strides=[1,1,1,1])
     output = tconv3
     print('output: ', tconv3.get_shape())
 
