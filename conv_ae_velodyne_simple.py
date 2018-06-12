@@ -444,7 +444,7 @@ fc_size_array = np.array([[800,400,50],
                  [50,25,50],
                  [20,10,50]])
 
-üatches_array = np.array([1,3,5,7,9])
+patches_array = np.array([1,3,5,7,9])
   
 current_string = "before loop\n"
 log_file.write(current_string)
