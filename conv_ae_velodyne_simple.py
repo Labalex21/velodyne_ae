@@ -97,7 +97,7 @@ def fully_connected(x_input, W, b):
         output = tf.nn.relu(output)
         return output
 
-def create_network(x_input, number_fc, fc_widths):
+def create_network(x_input, number_fc, fc_widths, patch_size, n_features):
     current_string = "create network " + str(fc_widths[0]) + " " + str(fc_widths[1]) + " " + str(fc_widths[2]) + " \n"
     log_file.write(current_string)
     log_file.flush()
@@ -155,9 +155,9 @@ def create_network(x_input, number_fc, fc_widths):
     
 
     # 2nd fully connected layer
-    fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
-    encoder = fc2
-    print('fc2: ', fc2.get_shape())
+    #fc2 = fully_connected(fc1, weights['wfc2'], biases['b2_enc'])
+    #encoder = fc2
+    #print('fc2: ', fc2.get_shape())
 
     # 3rd fully connected layer --> encoder values
     # fc3 = fully_connected(fc2, weights['wfc3'], biases['b3_enc'])
@@ -169,11 +169,11 @@ def create_network(x_input, number_fc, fc_widths):
     # print('tfc1: ', tfc1.get_shape())
 
     # 2nd fully connected layer of decoder
-    tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
-    print('tfc2: ', tfc2.get_shape())
+    #tfc2 = fully_connected(fc2, tf.transpose(weights['wfc2']), biases['b1_dec'])
+    #print('tfc2: ', tfc2.get_shape())
 
     # 3rd and last fully connected layer of decoder
-    tfc3 = fully_connected(tfc2, tf.transpose(weights['wfc1']), biases['b3_dec'])
+    tfc3 = fully_connected(fc1, tf.transpose(weights['wfc1']), biases['b3_dec'])
     tfc3 = tf.reshape(tfc3, [-1,900, 16, n_features])
     # tfc3 = tf.reshape(tfc3, [-1,2 , 113, n_features])
     print('tfc3: ', tfc3.get_shape())
@@ -436,27 +436,31 @@ def export_encoder_csv(path_data, path_export, path_current_traj, last_encoder_w
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
 
-fc_array = np.array([2,2,2,2,2,2])
+fc_array = np.array([1,1,1,1,1,1])
 fc_size_array = np.array([[800,400,50],
                  [400,200,50],
                  [200,100,50],
                  [100,50,50],
                  [50,25,50],
                  [20,10,50]])
+
+üatches_array = np.array([1,3,5,7,9])
   
 current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(1,fc_array.shape[0]):
+for i in range(patches_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
-    number_of_fc = fc_array[i]
+    #number_of_fc = fc_array[i]
+    number_of_fc =1
     path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     #dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
-    last_encoder_width = fc_size_array[i,number_of_fc-1]
+    #last_encoder_width = fc_size_array[i,number_of_fc-1]
+    last_encoder_width = 50
     
     current_string = "reset graph\n"
     log_file.write(current_string)
@@ -471,11 +475,11 @@ for i in range(1,fc_array.shape[0]):
     current_string = "Number batches: " + str(number_batches) + "\n"
     log_file.write(current_string)
     log_file.flush()
-    current_fc_size_array = fc_size_array[i]
+    current_fc_size_array = fc_size_array[4]
     current_string = "Create network" + "\n"
     log_file.write(current_string)
     log_file.flush()
-    output, x, fc = create_network(x,number_of_fc,current_fc_size_array)
+    output, x, fc = create_network(x,number_of_fc,current_fc_size_array, patches_array[i], n_features)
     
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
