@@ -450,14 +450,14 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(1,patches_array.shape[0]):
+for i in range(1,fc_size_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
     #number_of_fc = fc_array[i]
     number_of_fc =1
-    path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + '_' +  str(patches_array[i]) + ".ckpt"
+    path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + '_' +  str(3) + '_' +  str(8) + ".ckpt"
     #dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     #last_encoder_width = fc_size_array[i,number_of_fc-1]
     last_encoder_width = 50
@@ -475,11 +475,12 @@ for i in range(1,patches_array.shape[0]):
     current_string = "Number batches: " + str(number_batches) + "\n"
     log_file.write(current_string)
     log_file.flush()
-    current_fc_size_array = fc_size_array[4]
+    current_fc_size_array = fc_size_array[i]
     current_string = "Create network" + "\n"
     log_file.write(current_string)
     log_file.flush()
-    output, x, fc = create_network(x,number_of_fc,current_fc_size_array, patches_array[i], n_features)
+    n_features = 8
+    output, x, fc = create_network(x,number_of_fc,current_fc_size_array, 3, n_features)
     
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
