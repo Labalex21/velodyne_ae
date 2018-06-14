@@ -459,8 +459,8 @@ for i in range(1,fc_size_array.shape[0]):
     number_of_fc =1
     path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + '_' +  str(3) + '_' +  str(8) + ".ckpt"
     #dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
-    #last_encoder_width = fc_size_array[i,number_of_fc-1]
-    last_encoder_width = 50
+    last_encoder_width = fc_size_array[i,number_of_fc-1]
+    #last_encoder_width = 50
     
     current_string = "reset graph\n"
     log_file.write(current_string)
