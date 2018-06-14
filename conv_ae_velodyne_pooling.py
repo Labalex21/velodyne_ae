@@ -32,7 +32,7 @@ res_filename = "../data/results/ae_simple_" + dt.datetime.now().strftime("%Y%m%d
 res_file = open(res_filename,"w")
 
 # input data parameters
-epochs = 20
+epochs = 100
 batch_size = 20
 
 # images parameters
@@ -457,13 +457,13 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(1,fc_array.shape[0]):
+for i in range(4,5):#fc_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
     log_file.flush()
     number_of_fc = fc_array[i]
-    path_model = "../data/20180201/models/conv_ae_velodyne_simple_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
+    path_model = "../data/20180201/models/conv_ae_velodyne_pooling_100_" + str(fc_size_array[i,0]) + "_" + str(fc_size_array[i,1]) + "_" + str(fc_size_array[i,2]) + "_" + str(number_of_fc) + "_" + str(number_of_conv) + ".ckpt"
     #dir_test = "../data/imgs/result_ae/fc_simple/" + str(i) + "/"
     last_encoder_width = fc_size_array[i,number_of_fc-1]
     
@@ -504,34 +504,42 @@ for i in range(1,fc_array.shape[0]):
     
     # export encoder
     path_traj = '../data/traj/scan_traj_20180201_1.txt'
-    dir_export_20180201 = '../data/features/velodyne_20180201_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180201 = '../data/features/velodyne_20180201_simple_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180201/scans_npy_1/'
     export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
     
     path_traj = '../data/traj/scan_traj_20180531_2.txt'
-    dir_export_20180531 = '../data/features/velodyne_20180531_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180531 = '../data/features/velodyne_20180531_simple_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
     dir_data = '../data/20180531/scans_npy_2/'
     export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
-    dir_export_20180410_1 = '../data/features/velodyne_20180410_2_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
+    dir_export_20180410_1 = '../data/features/velodyne_20180410_2_simple_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
     dir_data = '../data/20180410/scans_npy_2/'
     export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
-    dir_export_icsens = '../data/features/velodyne_icsens_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data_icsens = "../data/20180201/scans_icsens/"
+    dir_export_icsens = '../data/features/velodyne_icsens_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data_icsens = "../data/20180201/scans_npy_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
-    #export_encoder_csv(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
+    export_encoder_npy(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
-    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_simple_pooling_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '.json'
-    dir_data_herrenhausen = "../data/20180206/scans/"
+    dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data_herrenhausen = "../data/20180206/scans_npy/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    #export_encoder_csv(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    
+    dir_export_leinhausen = '../data/features/velodyne_leinhausen_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data_leinhausen = "../data/20180503/scans_npy/"
+    path_traj_leinhausen = '../data/traj/scan_traj_20180503.txt'
+    export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    
+    dir_export_stoecken = '../data/features/velodyne_stoecken_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data_stoecken = "../data/20180509/scans_npy/"
+    path_traj_stoecken = '../data/traj/scan_traj_20180509.txt'
+    export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
 
-   
-    #path_array_ref = [dir_export_20180201, dir_data_icsens, dir_data_herrenhausen]
-    path_array_ref = [dir_export_20180201, dir_export_20180531]
+    #path_array_ref = [dir_export_20180201, dir_export_20180531, dir_data_icsens, dir_data_herrenhausen, dir_export_leinhausen, dir_export_stoecken]
 
    # get results
     #cluster_size = 1000
