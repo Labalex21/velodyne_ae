@@ -527,7 +527,7 @@ for i in range(4,5):#fc_array.shape[0]):
     dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans_npy/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    #export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
     
     dir_export_leinhausen = '../data/features/velodyne_leinhausen_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_leinhausen = "../data/20180503/scans_npy/"
