@@ -522,22 +522,22 @@ for i in range(4,5):#fc_array.shape[0]):
     dir_export_icsens = '../data/features/velodyne_icsens_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_icsens = "../data/20180201/scans_npy_icsens/"
     path_traj_icsens = '../data/traj/scan_traj_20180201_icsens.txt'
-    #export_encoder_npy(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
+    export_encoder_npy(dir_data_icsens, dir_export_icsens, path_traj_icsens, last_encoder_width)
     
     dir_export_herrenhausen = '../data/features/velodyne_herrenhausen_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_herrenhausen = "../data/20180206/scans_npy/"
     path_traj_herrenhausen = '../data/traj/scan_traj_20180206.txt'
-    #export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
     
     dir_export_leinhausen = '../data/features/velodyne_leinhausen_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_leinhausen = "../data/20180503/scans_npy/"
     path_traj_leinhausen = '../data/traj/scan_traj_20180503.txt'
-    export_encoder_npy(dir_data_leinhausen, dir_export_leinhausen, path_traj_leinhausen, last_encoder_width)
+    #export_encoder_npy(dir_data_leinhausen, dir_export_leinhausen, path_traj_leinhausen, last_encoder_width)
     
     dir_export_stoecken = '../data/features/velodyne_stoecken_pooling_100_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_stoecken = "../data/20180509/scans_npy/"
     path_traj_stoecken = '../data/traj/scan_traj_20180509.txt'
-    export_encoder_npy(dir_data_stoecken, dir_export_stoecken, path_traj_stoecken, last_encoder_width)
+    #export_encoder_npy(dir_data_stoecken, dir_export_stoecken, path_traj_stoecken, last_encoder_width)
 
     #path_array_ref = [dir_export_20180201, dir_export_20180531, dir_data_icsens, dir_data_herrenhausen, dir_export_leinhausen, dir_export_stoecken]
 
