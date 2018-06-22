@@ -320,8 +320,15 @@ def export_encoder(path_data, path_export, path_current_traj, last_encoder_width
                 #cv2.imwrite(string_pred, pred[j]*255)
 
 def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_width):
+    current_string = "get traj" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     # get trajectory
     traj = fh.get_scan_trajectory_csv(path_current_traj)
+    
+    current_string = "get images" + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     
     # get all images
     filenames = fh.files_in_folder(path_data)
@@ -332,13 +339,19 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
     number_of_scans = (filenames.shape[0]-1)*scans_per_run
     traj = traj[0:number_of_scans,:]
     
+    current_string = "number of scans: " + str(number_of_scans) + "\n"
+    log_file.write(current_string)
+    log_file.flush()
+    
     # save feature values here
     encoder_values = np.zeros((int(number_of_scans), int(last_encoder_width)))
     k = 1
     
     if number_of_scans % scans_per_run == 0:
         k = 0
-    
+    current_string = "go..." + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     # get feature values
     saver = tf.train.Saver()
     with tf.Session()  as sess:
@@ -358,6 +371,9 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
                 log_file.write(current_string)
                 log_file.flush()
     
+    current_string = "Done, write file..." + "\n"
+    log_file.write(current_string)
+    log_file.flush()
     if path_current_traj == '../data/traj/scan_traj_20180410_2.txt':
         encoder_values = np.delete(encoder_values,np.arange(8100,8620),axis=0)
         traj = np.delete(traj,np.arange(8100,8620),axis=0)
@@ -377,6 +393,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
     # export values to json file
     with open(path_export, 'w') as f:
         json.dump({"encoder": encoder_values.tolist(), "trajectory": traj.tolist()}, f)
+    
+    current_string = "Done." + "\n"
+    log_file.write(current_string)
+    log_file.flush()
         
     
         
@@ -497,7 +517,7 @@ for i in range(features_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    train()
+    #train()
     
     current_string = "Export" + "\n"
     log_file.write(current_string)
