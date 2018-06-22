@@ -483,6 +483,10 @@ for i in range(features_array.shape[0]):
     log_file.flush()
     output, x, fc = create_network(x,number_of_fc,current_fc_size_array, 3, features_array[i])
     
+    # random value: 0 or 1 --> if 0 --> reverse x (mirror scan)
+    rand_value = tf.random_uniform([1], minval=0, maxval=1, dtype=tf.int32)
+    x = tf.cond(rand_value > 0, lambda: x, lambda: reverse(x, axis=0))
+    
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
 
@@ -501,7 +505,7 @@ for i in range(features_array.shape[0]):
     
     # export encoder
     path_traj = '../data/traj/scan_traj_20180201_1.txt'
-    dir_export_20180201 = '../data/features/velodyne_20180201_features_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '_' +  str(features_array[i]) + '.json'
+    dir_export_20180201 = '../data/features/velodyne_20180201_features_mirror_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '_' +  str(features_array[i]) + '.json'
     dir_data = '../data/20180201/scans_npy_1/'
     export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
     
@@ -509,12 +513,12 @@ for i in range(features_array.shape[0]):
     dir_export_20180531 = '../data/features/velodyne_20180531_features_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '_' +  str(features_array[i]) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
     dir_data = '../data/20180531/scans_npy_2/'
-    export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
+    #export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_1 = '../data/features/velodyne_20180410_2_features_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '_' +  str(features_array[i]) + '.json'
     dir_data = '../data/20180410/scans_npy_2/'
-    export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
+    #export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_features_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(patches_array[i]) + '_' +  str(features_array[i]) + '.json'
     dir_data_icsens = "../data/20180201/scans_npy_icsens/"
