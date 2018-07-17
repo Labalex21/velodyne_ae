@@ -367,10 +367,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
             current_string = str(i) + " " + str(filenames[i]) + "\n"
             log_file.write(current_string)
             log_file.flush()
-            values = sess.run([fc], feed_dict={x: scans})
+            #values = sess.run([fc], feed_dict={x: scans})
             start_idx = i*scans_per_run
             end_idx = start_idx + scans_per_run
-            encoder_values[start_idx:end_idx, :] = np.array(values)
+            #encoder_values[start_idx:end_idx, :] = np.array(values)
             current_string = str(i) + " " + str(filenames[i]) + "\n"
             log_file.write(current_string)
             log_file.flush()
