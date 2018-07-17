@@ -367,10 +367,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
             current_string = str(i) + " " + str(filenames[i]) + "\n"
             log_file.write(current_string)
             log_file.flush()
-            #values = sess.run([fc], feed_dict={x: scans})
+            values = sess.run([fc], feed_dict={x: scans})
             start_idx = i*scans_per_run
             end_idx = start_idx + scans_per_run
-            #encoder_values[start_idx:end_idx, :] = np.array(values)
+            encoder_values[start_idx:end_idx, :] = np.array(values)
             current_string = str(i) + " " + str(filenames[i]) + "\n"
             log_file.write(current_string)
             log_file.flush()
@@ -515,7 +515,7 @@ for i in range(features_array.shape[0]):
     
     # random value: 0 or 1 --> if 0 --> reverse x (mirror scan)
     rand_value = tf.Variable(tf.random_uniform([], minval=0, maxval=1, dtype=tf.int32))
-    x = tf.cond(tf.equal(rand_value,tf.constant(1,dtype=tf.int32)), lambda: x, lambda: tf.reverse(x, [2]))
+    output = tf.cond(tf.equal(rand_value,tf.constant(1,dtype=tf.int32)), lambda: output, lambda: tf.reverse(output, [2]))
     
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
@@ -527,7 +527,7 @@ for i in range(features_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    train()
     
     current_string = "Export" + "\n"
     log_file.write(current_string)
