@@ -358,6 +358,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         #load model
         saver.restore(sess, path_model)
         for i in range(filenames.shape[0]-1):
+            current_string = "Load file " + str(filenames[i]) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
+            
             scans = np.load(filenames[i])
             scans = np.reshape(scans[:,:,:,0],[scans.shape[0],scans.shape[1],scans.shape[2],1])
             current_string = str(i) + " " + str(filenames[i]) + "\n"
@@ -372,10 +376,10 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
             log_file.flush()
             
             
-            if i % 10 is 0:
-                current_string = str(i) + " " + str(filenames[i]) + "\n"
-                log_file.write(current_string)
-                log_file.flush()
+            #if i % 10 is 0:
+            current_string = str(i) + " " + str(filenames[i]) + "\n"
+            log_file.write(current_string)
+            log_file.flush()
     
     current_string = "Done, write file..." + "\n"
     log_file.write(current_string)
@@ -523,7 +527,7 @@ for i in range(features_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    train()
+    #train()
     
     current_string = "Export" + "\n"
     log_file.write(current_string)
