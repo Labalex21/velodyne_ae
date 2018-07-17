@@ -358,7 +358,7 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
         #load model
         saver.restore(sess, path_model)
         for i in range(filenames.shape[0]-1):
-            current_string = "Load file " + str(filenames[i]) + "\n"
+            current_string = "Load file " + str(filenames[i]) + " " + str(filenames.shape[0]-1) + "\n"
             log_file.write(current_string)
             log_file.flush()
             
