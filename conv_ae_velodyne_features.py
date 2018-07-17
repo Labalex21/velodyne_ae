@@ -510,8 +510,8 @@ for i in range(features_array.shape[0]):
     output, x, fc = create_network(x,number_of_fc,current_fc_size_array, 3, features_array[i])
     
     # random value: 0 or 1 --> if 0 --> reverse x (mirror scan)
-    rand_value = tf.random_uniform([], minval=0, maxval=1, dtype=tf.int32)
-    x = tf.cond(rand_value > 0, lambda: x, lambda: tf.reverse(x, [2]))
+    #rand_value = tf.random_uniform([], minval=0, maxval=1, dtype=tf.int32)
+    #x = tf.cond(rand_value > 0, lambda: x, lambda: tf.reverse(x, [2]))
     
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
