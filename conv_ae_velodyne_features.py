@@ -514,7 +514,7 @@ for i in range(features_array.shape[0]):
     output, x, fc = create_network(x,number_of_fc,current_fc_size_array, 3, features_array[i])
     
     # random value: 0 or 1 --> if 0 --> reverse x (mirror scan)
-    rand_value = tf.Variable(tf.random_uniform([], minval=0, maxval=1, dtype=tf.int32))
+    rand_value = tf.Variable(tf.random_uniform([], minval=0, maxval=2, dtype=tf.int32))
     output = tf.cond(tf.equal(rand_value,tf.constant(1,dtype=tf.int32)), lambda: output, lambda: tf.reverse(output, [2]))
     
     # loss
