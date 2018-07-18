@@ -450,7 +450,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(5,fc_size_array.shape[0]):
+for i in range(3,fc_size_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
@@ -502,18 +502,18 @@ for i in range(5,fc_size_array.shape[0]):
     path_traj = '../data/traj/scan_traj_20180201_1.txt'
     dir_export_20180201 = '../data/features/velodyne_20180201_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data = '../data/20180201/scans_npy_1/'
-    export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
+    #export_encoder_npy(dir_data, dir_export_20180201, path_traj, last_encoder_width)
     
     path_traj = '../data/traj/scan_traj_20180531_2.txt'
     dir_export_20180531 = '../data/features/velodyne_20180531_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     #dir_data = '../data/20180201/scans_utm_2/'
     dir_data = '../data/20180531/scans_npy_2/'
-    export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
+    #export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
 
     path_traj = '../data/traj/scan_traj_20180410_2.txt'
     dir_export_20180410_1 = '../data/features/velodyne_20180410_2_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data = '../data/20180410/scans_npy_2/'
-    export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
+    #export_encoder_npy(dir_data, dir_export_20180410_1, path_traj, last_encoder_width)
 
     dir_export_icsens = '../data/features/velodyne_icsens_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_icsens = "../data/20180201/scans_npy_icsens/"
@@ -533,7 +533,7 @@ for i in range(5,fc_size_array.shape[0]):
     dir_export_stoecken = '../data/features/velodyne_stoecken_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_stoecken = "../data/20180509/scans_npy/"
     path_traj_stoecken = '../data/traj/scan_traj_20180509.txt'
-    #export_encoder_npy(dir_data_herrenhausen, dir_export_herrenhausen, path_traj_herrenhausen, last_encoder_width)
+    export_encoder_npy(dir_data_stoecken, dir_export_stoecken, path_traj_stoecken, last_encoder_width)
 
    
     #path_array_ref = [dir_export_20180201, dir_export_20180531, dir_data_icsens, dir_data_herrenhausen, dir_export_leinhausen, dir_export_stoecken]
