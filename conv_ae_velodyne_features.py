@@ -506,6 +506,7 @@ for i in range(features_array.shape[0]):
     # random value: 0 or 1 --> if 0 --> reverse x (mirror scan)
     rand_value = tf.random_uniform([], minval=0, maxval=2, dtype=tf.int32)
     output = tf.cond(tf.equal(rand_value,tf.constant(1,dtype=tf.int32)), lambda: output, lambda: tf.reverse(output, [1]))
+    output = tf.cond(tf.equal(rand_value,tf.constant(1,dtype=tf.int32)), lambda: output, lambda: tf.reverse(output, [2]))
     
     # loss
     loss = tf.reduce_mean(tf.pow(x - output, 2))
@@ -517,7 +518,7 @@ for i in range(features_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    train()
     
     current_string = "Export" + "\n"
     log_file.write(current_string)
