@@ -234,7 +234,7 @@ def train():
                             
                 elapsed = time.time() - start
                 elapsed2 = time.time() - start2
-                if i % 10 == 0:
+                if i % 100 == 0:
                     current_string = "epoch: " + str(e+1) + " iteration: " + str(i+1) + "current los: " + str(current_loss) + " rv: " + str(rv) + "\n"
                     log_file.write(current_string)
                     log_file.flush()
@@ -357,29 +357,19 @@ def export_encoder_npy(path_data, path_export, path_current_traj, last_encoder_w
     with tf.Session()  as sess:
         #load model
         saver.restore(sess, path_model)
-        for i in range(filenames.shape[0]-1):
-            current_string = "Load file " + str(filenames[i]) + " " + str(filenames.shape[0]-1) + "\n"
-            log_file.write(current_string)
-            log_file.flush()
-            
+        for i in range(filenames.shape[0]-1):            
             scans = np.load(filenames[i])
             scans = np.reshape(scans[:,:,:,0],[scans.shape[0],scans.shape[1],scans.shape[2],1])
-            current_string = str(i) + " " + str(filenames[i]) + "\n"
-            log_file.write(current_string)
-            log_file.flush()
             values = sess.run([fc], feed_dict={x: scans})
             start_idx = i*scans_per_run
             end_idx = start_idx + scans_per_run
             encoder_values[start_idx:end_idx, :] = np.array(values)
-            current_string = str(i) + " " + str(filenames[i]) + "\n"
-            log_file.write(current_string)
-            log_file.flush()
             
             
-            #if i % 10 is 0:
-            current_string = str(i) + " " + str(filenames[i]) + "\n"
-            log_file.write(current_string)
-            log_file.flush()
+            if i % 100 is 0:
+                current_string = str(i) + " " + str(filenames[i]) + "\n"
+                log_file.write(current_string)
+                log_file.flush()
     
     current_string = "Done, write file..." + "\n"
     log_file.write(current_string)
