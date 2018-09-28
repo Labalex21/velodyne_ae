@@ -450,7 +450,7 @@ current_string = "before loop\n"
 log_file.write(current_string)
 log_file.flush()
 
-for i in range(3,fc_size_array.shape[0]):
+for i in range(3,4):#fc_size_array.shape[0]):
     
     current_string = "in loop\n"
     log_file.write(current_string)
@@ -492,7 +492,7 @@ for i in range(3,fc_size_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    #train()
+    train()
     
     current_string = "Export" + "\n"
     log_file.write(current_string)
@@ -533,7 +533,7 @@ for i in range(3,fc_size_array.shape[0]):
     dir_export_stoecken = '../data/features/velodyne_stoecken_simple_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
     dir_data_stoecken = "../data/20180509/scans_npy/"
     path_traj_stoecken = '../data/traj/scan_traj_20180509.txt'
-    export_encoder_npy(dir_data_stoecken, dir_export_stoecken, path_traj_stoecken, last_encoder_width)
+    #export_encoder_npy(dir_data_stoecken, dir_export_stoecken, path_traj_stoecken, last_encoder_width)
 
    
     #path_array_ref = [dir_export_20180201, dir_export_20180531, dir_data_icsens, dir_data_herrenhausen, dir_export_leinhausen, dir_export_stoecken]
