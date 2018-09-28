@@ -28,8 +28,8 @@ log_file = open(log_filename,"w")
 log_file.write("start\n")
 log_file.flush()
 
-res_filename = "../data/results/ae_simple_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
-res_file = open(res_filename,"w")
+#res_filename = "../data/results/ae_simple_" + dt.datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".txt"
+#res_file = open(res_filename,"w")
 
 # input data parameters
 epochs = 20
