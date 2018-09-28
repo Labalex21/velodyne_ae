@@ -492,7 +492,7 @@ for i in range(3,4):#fc_size_array.shape[0]):
     log_file.write(current_string)
     log_file.flush()
     #train
-    train()
+    #train()
     
     current_string = "Export" + "\n"
     log_file.write(current_string)
@@ -535,6 +535,22 @@ for i in range(3,4):#fc_size_array.shape[0]):
     path_traj_stoecken = '../data/traj/scan_traj_20180509.txt'
     #export_encoder_npy(dir_data_stoecken, dir_export_stoecken, path_traj_stoecken, last_encoder_width)
 
+    
+    path_traj = '../data/traj/scan_traj_20180531_2.txt'
+    dir_export_20180531 = '../data/features/velodyne_20180531_anne_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data = '../data/20180531/scans_npy_2/'
+    export_encoder_npy(dir_data, dir_export_20180531, path_traj, last_encoder_width)
+    
+    path_traj = '../data/traj/scan_traj_20180913.txt'
+    dir_export_20180913 = '../data/features/velodyne_20180913_anne_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data = '../data/20180913/scans_npy/'
+    export_encoder_npy(dir_data, dir_export_20180913, path_traj, last_encoder_width)
+    
+    path_traj = '../data/traj/scan_traj_20180926.txt'
+    dir_export_20180926 = '../data/features/velodyne_20180926_anne_' + str(last_encoder_width) + '_' +  str(number_of_fc) + '_' +  str(number_of_conv) + '_' +  str(3) + '.json'
+    dir_data = '../data/20180926/scans_npy/'
+    export_encoder_npy(dir_data, dir_export_20180926, path_traj, last_encoder_width)
+    
    
     #path_array_ref = [dir_export_20180201, dir_export_20180531, dir_data_icsens, dir_data_herrenhausen, dir_export_leinhausen, dir_export_stoecken]
     path_array_ref = [dir_export_20180201, dir_export_20180531]
